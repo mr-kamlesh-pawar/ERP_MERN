@@ -1,135 +1,162 @@
-//register
-//login
-//logout
-//auth-middleware
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
+const Admin = require("../../models/Admin");
+const Student = require("../../models/Student");
+const Faculty = require("../../models/Faculty");
 
-//register
+// Register User
 const registerUser = async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { userName, email, password, role } = req.body;
 
   try {
-      
-      const existingEmail = await User.findOne({ email });
-      if (existingEmail) {
-          return res.json({
-              success: false,
-              message: 'Email already exists. Please choose a different one.',
-            });
-        }
-
-        const existingUser = await User.findOne({ userName });
-        if (existingUser) {
-            return res.json({
-                success: false,
-                message: 'User Name already exists. Please choose a different one.',
-              });
-          }
-
-    const hashPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({
-      userName,
-      email,
-      password: hashPassword,
-    });
-
-    newUser.save();
-    res
-      .status(201)
-      .json({ success: true, message: "User Registered Successfully" });
-  } catch (error) {
-    if (error.code === 11000) {
-      res
-        .status(400)
-        .json({ success: false, error: "Username already exists" });
-    } else {
-      res.status(500).json({ success: false, error: "Internal server error" });
+    // Check if the email or username already exists in any collection
+    const existingEmail = await Admin.findOne({ email }) || await Student.findOne({ email }) || await Faculty.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists. Please choose a different one.",
+      });
     }
 
-    console.log("At Register Module", error);
+    const existingUser = await Admin.findOne({ userName }) || await Student.findOne({ userName }) || await Faculty.findOne({ userName });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Username already exists. Please choose a different one.",
+      });
+    }
+
+    // Hash the password
+    const hashPassword = await bcrypt.hash(password, 12);
+
+    // Create a new user based on the role
+    let newUser;
+    if (role === "admin") {
+      newUser = new Admin({ userName, email, password: hashPassword });
+    } else if (role === "student") {
+      newUser = new Student({ userName, email, password: hashPassword });
+    } else if (role === "faculty") {
+      newUser = new Faculty({ userName, email, password: hashPassword });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role specified.",
+      });
+    }
+
+    // Save the user to the database
+    await newUser.save();
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully.",
+    });
+  } catch (error) {
+    console.error("Error in registerUser:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
   }
 };
 
-//login
-
+// Login User
 const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    // Check if the user exists in any collection
+    let user =
+      (await Admin.findOne({ email })) ||
+      (await Student.findOne({ email })) ||
+      (await Faculty.findOne({ email }));
 
-    const checkUser=  await User.findOne({email});
-    if(!checkUser){
-        return res.json({
-            success:false,
-            message:'User not found Please Register First',
-        })
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found. Please register first.",
+      });
     }
 
-    const verifyPassword= await bcrypt.compare(password, checkUser.password);
-    if(!verifyPassword){
-        return res.json({
-            success:false,
-            message:'Invalid Password! Please try again',
-        });
-
+    // Verify the password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password. Please try again.",
+      });
     }
 
-    //jwt token
+    // Generate a JWT token
     const token = jwt.sign(
-        {
-            id: checkUser._id,
-            userName: checkUser.userName,
-            role: checkUser.role,
-            email: checkUser.email,
-        }, 'JWT_SECRET_KEY', {expiresIn: '1h'}
+      {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+        email: user.email,
+      },
+      "JWT_SECRET_KEY",
+      { expiresIn: "1h" }
     );
 
-    res.cookie('token',token, {httpOnly: true, secure: true} ).json({
-        success: true,
-        message: 'User logged in successfully',
-        user:{
-            id: checkUser._id,
-            userName: checkUser.userName,
-            role: checkUser.role,
-            email: checkUser.email,
-        }
-    })
-
-
-
+    // Set the token in a cookie and send the response
+    res.cookie("token", token, { httpOnly: true, secure: true }).json({
+      success: true,
+      message: "User logged in successfully.",
+      user: {
+        id: user._id,
+        userName: user.userName,
+        role: user.role,
+        email: user.email,
+      },
+    });
   } catch (error) {
-    console.log("At Register Module", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Some Error Occured while Register" });
+    console.error("Error in loginUser:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
   }
 };
 
-//logout
-
-const logout=  async(req,res)=>{
-    res.clearCookie('token').json({
-        success:true,
-        message: 'User logout Sucessfully'
+// Logout User
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token").json({
+      success: true,
+      message: "User logged out successfully.",
     });
-}
+  } catch (error) {
+    console.error("Error in logout:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
 
-//auth-middleware
+// Auth Middleware
 const authMiddleware = async (req, res, next) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({ success: false, message: "Unauthorized User!" });
-    }
-    try{
-        const decoded= jwt.verify(token, 'JWT_SECRET_KEY');
-        req.user= decoded;
-        next()
-    } catch(error){
-        console.log(error);
-        return res.status(401).json({ success: false, message: "Unauthorized User" });
-    }
-}
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized user. Please log in.",
+    });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, "JWT_SECRET_KEY");
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.error("Error in authMiddleware:", error);
+    res.status(401).json({
+      success: false,
+      message: "Unauthorized user. Invalid token.",
+    });
+  }
+};
 
 module.exports = { registerUser, loginUser, logout, authMiddleware };

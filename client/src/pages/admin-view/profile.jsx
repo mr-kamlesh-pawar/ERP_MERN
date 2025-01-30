@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { User, School, Phone, MapPin, Calendar } from "lucide-react"; // Add lucide icons
@@ -135,13 +134,13 @@ const AdminProfile = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full py-2 px-4 text-white rounded-lg transition-all"
                 >
                   {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
+                </button>
               </form>
             </TabsContent>
 
@@ -166,13 +165,13 @@ const AdminProfile = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full py-2 px-4 text-white rounded-lg transition-all"
                 >
                   {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
+                </button>
               </form>
             </TabsContent>
 
@@ -197,13 +196,13 @@ const AdminProfile = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full py-2 px-4 text-white rounded-lg transition-all"
                 >
                   {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
+                </button>
               </form>
             </TabsContent>
 
@@ -228,13 +227,13 @@ const AdminProfile = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full py-2 px-4 text-white rounded-lg transition-all"
                 >
                   {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
+                </button>
               </form>
             </TabsContent>
 
@@ -259,13 +258,13 @@ const AdminProfile = () => {
                     />
                   </div>
                 ))}
-                <Button
+                <button
                   type="submit"
                   disabled={isUpdating}
                   className="w-full py-2 px-4 text-white rounded-lg transition-all"
                 >
                   {isUpdating ? "Updating..." : "Update Profile"}
-                </Button>
+                </button>
               </form>
             </TabsContent>
           </Tabs>

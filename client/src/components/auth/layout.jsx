@@ -11,7 +11,7 @@ const AuthLayout = () => {
           
           <img  className="" 
           src={clg} alt="" />
-            <h1 className='text-xl font-extrabold tracking-tight'>Welcome to Rasiklal M. Dhariwal Institute of Technology, Chinchwad</h1>
+            <h1 className='text-xl font-extrabold tracking-tight text-black'>Welcome to Rasiklal M. Dhariwal Institute of Technology, Chinchwad</h1>
 
         </div>
 

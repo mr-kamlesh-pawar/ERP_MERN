@@ -44,7 +44,7 @@ function App() {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (isLoading) return <Skeleton className="w-full h-[600px] bg-black" />;
+  if (isLoading) return <Skeleton className="w-full h-screen bg-black" />;
 
   console.log(isLoading, user);
 
