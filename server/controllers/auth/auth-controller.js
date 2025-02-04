@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign(
       {
-        id: user._id,
+        id: user._id, // Ensure this matches the payload structure expected in authMiddleware
         userName: user.userName,
         role: user.role,
         email: user.email,
@@ -135,7 +135,12 @@ const logout = async (req, res) => {
 };
 
 // Auth Middleware
+
+
+//const jwt = require("jsonwebtoken");
+
 const authMiddleware = async (req, res, next) => {
+  // Get the token from the cookies
   const token = req.cookies.token;
 
   if (!token) {
@@ -148,8 +153,16 @@ const authMiddleware = async (req, res, next) => {
   try {
     // Verify the token
     const decoded = jwt.verify(token, "JWT_SECRET_KEY");
-    req.user = decoded;
-    next();
+
+    // Attach the decoded user information to the request object
+    req.user = {
+      id: decoded.id, // Ensure this matches the payload structure when the token was created
+      userName: decoded.userName,
+      role: decoded.role,
+      email: decoded.email,
+    };
+
+    next(); // Proceed to the next middleware or controller
   } catch (error) {
     console.error("Error in authMiddleware:", error);
     res.status(401).json({
@@ -158,5 +171,7 @@ const authMiddleware = async (req, res, next) => {
     });
   }
 };
+
+
 
 module.exports = { registerUser, loginUser, logout, authMiddleware };

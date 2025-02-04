@@ -7,7 +7,7 @@ const cors = require('cors');
  const authRouter= require('./routes/auth-routes/auth-routes');
 // const adminProductsRoute = require("./routes/admin/products-routes")
 const PORT = process.env.PORT;
-
+const adminRoutes = require('./routes/admin/adminRoutes')
 app.use(cors({
     'origin': 'http://localhost:5173',
     'methods': ['GET', 'PUT', 'POST', 'DELETE'],
@@ -23,7 +23,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
-//app.use('/api/admin/products', adminProductsRoute);
+app.use('/api/admin', adminRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

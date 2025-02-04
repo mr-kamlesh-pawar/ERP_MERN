@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {  SelectItem, SelectTrigger, SelectContent, SelectLabel, Select, SelectGroup } from "@/components/ui/select";
+import { SelectItem, SelectTrigger, SelectContent, SelectLabel, Select, SelectGroup } from "@/components/ui/select";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const AdminNotice = () => {
   const [notices, setNotices] = useState([]);
@@ -13,29 +14,53 @@ const AdminNotice = () => {
     title: "",
     description: "",
     date: new Date().toISOString().split("T")[0], // Default to current date
-    from: "all", // Default "to" value
-    to: "all", // Default "for" value (all, students, faculties)
+    from: "admin", // Default "from" value
+    to: "all", // Default "to" value (all, students, faculties)
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch all notices from the backend
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/notices");
+        setNotices(response.data.notices);
+      } catch (error) {
+        console.error("Error fetching notices:", error);
+      }
+    };
+    fetchNotices();
+  }, []);
+
   // Handle Create/Update
-  const handleSaveNotice = () => {
-    if (action === "create") {
-      setNotices([...notices, { ...noticeData, id: Date.now() }]);
-      console.log(noticeData);
-    } else if (action === "update") {
-      setNotices(
-        notices.map((notice) =>
-          notice.id === noticeData.id ? { ...noticeData } : notice
-        )
-      );
+  const handleSaveNotice = async () => {
+    try {
+      if (action === "create") {
+        // Create a new notice
+        const response = await axios.post("http://localhost:5000/api/admin/notices", noticeData);
+        setNotices([...notices, response.data.notice]);
+      } else if (action === "update") {
+        // Update an existing notice
+        const response = await axios.put(
+          `http://localhost:5000/api/admin/notices/${noticeData._id}`,
+          noticeData
+        );
+        setNotices(notices.map((notice) => (notice._id === noticeData._id ? response.data.notice : notice)));
+      }
+      closeModal();
+    } catch (error) {
+      console.error("Error saving notice:", error);
     }
-    closeModal();
   };
 
   // Handle Delete
-  const handleDeleteNotice = (id) => {
-    setNotices(notices.filter((notice) => notice.id !== id));
+  const handleDeleteNotice = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/notices/${id}`);
+      setNotices(notices.filter((notice) => notice._id !== id));
+    } catch (error) {
+      console.error("Error deleting notice:", error);
+    }
   };
 
   // Open Modal for Create or Update
@@ -64,7 +89,6 @@ const AdminNotice = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setNoticeData({
-      id: null,
       title: "",
       description: "",
       date: new Date().toISOString().split("T")[0],
@@ -101,8 +125,8 @@ const AdminNotice = () => {
           </thead>
           <tbody>
             {notices.map((notice) => (
-              <tr key={notice.id}>
-                <td className="px-4 py-2 border border-gray-300">{notice.id}</td>
+              <tr key={notice._id}>
+                <td className="px-4 py-2 border border-gray-300">{notice._id}</td>
                 <td
                   className="px-4 py-2 border border-gray-300 text-blue-600 cursor-pointer"
                   onClick={() => openViewNoticeModal(notice)}
@@ -118,7 +142,7 @@ const AdminNotice = () => {
                     <Pencil /> Update
                   </Button>
                   <Button
-                    onClick={() => handleDeleteNotice(notice.id)}
+                    onClick={() => handleDeleteNotice(notice._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2"
                   >
                     <Trash2 /> Delete
@@ -149,9 +173,9 @@ const AdminNotice = () => {
                 From
               </Label>
               <Input
-              type="text"
-              value="Admin"
-              disabled
+                type="text"
+                value="Admin"
+                disabled
               />
             </div>
 
@@ -160,23 +184,22 @@ const AdminNotice = () => {
                 To
               </Label>
               <Select
-  value={noticeData.to}
-  onValueChange={(value) => setNoticeData({ ...noticeData, to: value })} // Correct handler
-  className="mt-2 w-full"
->
-  <SelectTrigger>
-    <span>{noticeData.to}</span> {/* Display the currently selected value */}
-  </SelectTrigger>
-  <SelectContent>
-    <SelectGroup>
-      <SelectLabel>Recipient</SelectLabel>
-      <SelectItem value="all">All</SelectItem>
-      <SelectItem value="students">Students</SelectItem>
-      <SelectItem value="faculties">Faculties</SelectItem>
-    </SelectGroup>
-  </SelectContent>
-</Select>
-
+                value={noticeData.to}
+                onValueChange={(value) => setNoticeData({ ...noticeData, to: value })}
+                className="mt-2 w-full"
+              >
+                <SelectTrigger>
+                  <span>{noticeData.to}</span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Recipient</SelectLabel>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="students">Students</SelectItem>
+                    <SelectItem value="faculties">Faculties</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="mb-4">

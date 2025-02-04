@@ -16,11 +16,44 @@ const facultySchema= new mongoose.Schema({
         required: true,
         },
 
-        role:{
-            type: String,
-            default: 'faculty'
-
+    role:{
+        type: String,
+        default: 'faculty'
         },
+
+        name: {
+            type: String,
+            
+          },
+          avatar: {
+            type: String,
+          },
+          gender: {
+            type: String,
+          },
+          designation: {
+            type: String,
+            
+          },
+          department: {
+            type: String,
+            required: true,
+          },
+          contactNumber: {
+            type: Number,
+          },
+          dob: {
+            type: String,
+            
+          },
+          joiningYear: {
+            type: Number,
+           
+          },
+          passwordUpdated: {
+            type: Boolean,
+            default: false,
+          },
 
 
         

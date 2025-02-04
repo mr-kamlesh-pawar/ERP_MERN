@@ -1,65 +1,130 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const AdminOurFaculty = () => {
   const [faculties, setFaculties] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [action, setAction] = useState("create");
   const [facultyData, setFacultyData] = useState({
     id: null,
-    name: "",
+    userName: "",
     email: "",
     password: "",
     department: "",
-    bio: "",
-    profilePhoto: "",
   });
 
-  // Handle Create/Update
-  const handleSaveFaculty = () => {
-    if (action === "create") {
-      setFaculties([...faculties, { ...facultyData, id: Date.now() }]);
-    } else if (action === "update") {
-      setFaculties(
-        faculties.map((faculty) =>
-          faculty.id === facultyData.id ? { ...facultyData } : faculty
-        )
-      );
-    }
-    setShowModal(false);
-    setFacultyData({
-      id: null,
-      name: "",
-      email: "",
-      password: "",
-      department: "",
-      bio: "",
-      profilePhoto: "",
-    });
-  };
+  // Fetch all faculties and departments on initial load
+  useEffect(() => {
+    const fetchFaculties = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/faculties");
+        setFaculties(response.data);
+      } catch (error) {
+        console.error("Error fetching faculties:", error);
+      }
+    };
 
-  // Handle Delete
-  const handleDeleteFaculty = (id) => {
-    setFaculties(faculties.filter((faculty) => faculty.id !== id));
-  };
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/departments");
+        
+        // Check if the response has a `departments` property and it is an array
+        if (response.data.success && Array.isArray(response.data.departments)) {
+          setDepartments(response.data.departments); // Set the array of departments
+        } else {
+          console.error("Invalid response format for departments:", response.data);
+          setDepartments([]); // Fallback to empty array
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        setDepartments([]); // Fallback to empty array on error
+      }
+    };
 
-  // Open Modal for Create or Update
-  const openModal = (faculty = null, actionType = "create") => {
-    setAction(actionType);
-    setFacultyData(
-      faculty || {
+    fetchFaculties();
+    fetchDepartments();
+  }, []);
+
+  // Handle Create/Update Faculty
+  
+  const handleSaveFaculty = async () => {
+    try {
+      const apiUrl =
+        action === "create"
+          ? "http://localhost:5000/api/admin/faculty"
+          : `http://localhost:5000/api/admin/faculty/${facultyData.id}`;
+  
+      const method = action === "create" ? "post" : "put";
+  
+      console.log("Sending data to backend:", facultyData); // Log the payload
+  
+      const response = await axios.request({
+        method,
+        url: apiUrl,
+        data: facultyData,
+      });
+  
+      if (action === "create") {
+        setFaculties([...faculties, response.data.faculty]);
+      } else {
+        setFaculties(
+          faculties.map((faculty) =>
+            faculty._id === facultyData.id ? response.data.faculty : faculty
+          )
+        );
+      }
+  
+      setShowModal(false);
+      setFacultyData({
         id: null,
-        name: "",
+        userName: "",
         email: "",
         password: "",
         department: "",
-        bio: "",
-        profilePhoto: "",
+      });
+    } catch (error) {
+      console.error("Error saving faculty:", error);
+      if (error.response) {
+        console.error("Backend response error:", error.response.data); // Log backend error details
       }
+    }
+  };
+
+  // Handle Delete Faculty
+  const handleDeleteFaculty = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/faculty/${id}`);
+      setFaculties(faculties.filter((faculty) => faculty._id !== id));
+    } catch (error) {
+      console.error("Error deleting faculty:", error);
+    }
+  };
+
+  // Open Modal for Create/Update
+  const openModal = (faculty = null, actionType = "create") => {
+    setAction(actionType);
+    setFacultyData(
+      faculty
+        ? {
+            id: faculty._id,
+            userName: faculty.userName,
+            email: faculty.email,
+            password: faculty.password,
+            department: faculty.department,
+          }
+        : {
+            id: null,
+            userName: "",
+            email: "",
+            password: "",
+            department: "",
+          }
     );
     setShowModal(true);
   };
@@ -93,9 +158,9 @@ const AdminOurFaculty = () => {
           </thead>
           <tbody>
             {faculties.map((faculty) => (
-              <tr key={faculty.id}>
-                <td className="px-4 py-2 border border-gray-300">{faculty.id}</td>
-                <td className="px-4 py-2 border border-gray-300">{faculty.name}</td>
+              <tr key={faculty._id}>
+                <td className="px-4 py-2 border border-gray-300">{faculty._id}</td>
+                <td className="px-4 py-2 border border-gray-300">{faculty.userName}</td>
                 <td className="px-4 py-2 border border-gray-300">{faculty.email}</td>
                 <td className="px-4 py-2 border border-gray-300">{faculty.department}</td>
                 <td className="px-4 py-2 border border-gray-300">
@@ -106,7 +171,7 @@ const AdminOurFaculty = () => {
                     <Pencil /> Update
                   </Button>
                   <Button
-                    onClick={() => handleDeleteFaculty(faculty.id)}
+                    onClick={() => handleDeleteFaculty(faculty._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2"
                   >
                     <Trash2 /> Delete
@@ -133,8 +198,8 @@ const AdminOurFaculty = () => {
               <Input
                 id="name"
                 type="text"
-                value={facultyData.name}
-                onChange={(e) => setFacultyData({ ...facultyData, name: e.target.value })}
+                value={facultyData.userName}
+                onChange={(e) => setFacultyData({ ...facultyData, userName: e.target.value })}
                 className="mt-2 w-full"
               />
             </div>
@@ -171,38 +236,21 @@ const AdminOurFaculty = () => {
               <Label htmlFor="department" className="block text-sm font-semibold text-gray-700">
                 Department
               </Label>
-              <Input
-                id="department"
-                type="text"
+              <Select
                 value={facultyData.department}
-                onChange={(e) => setFacultyData({ ...facultyData, department: e.target.value })}
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label htmlFor="bio" className="block text-sm font-semibold text-gray-700">
-                Bio
-              </Label>
-              <Textarea
-                id="bio"
-                value={facultyData.bio}
-                onChange={(e) => setFacultyData({ ...facultyData, bio: e.target.value })}
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label htmlFor="profilePhoto" className="block text-sm font-semibold text-gray-700">
-                Profile Photo URL
-              </Label>
-              <Input
-                id="profilePhoto"
-                type="text"
-                value={facultyData.profilePhoto}
-                onChange={(e) => setFacultyData({ ...facultyData, profilePhoto: e.target.value })}
-                className="mt-2 w-full"
-              />
+                onValueChange={(value) => setFacultyData({ ...facultyData, department: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map((dept) => (
+                    <SelectItem key={dept._id} value={dept.department}>
+                      {dept.department}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex justify-end gap-4">

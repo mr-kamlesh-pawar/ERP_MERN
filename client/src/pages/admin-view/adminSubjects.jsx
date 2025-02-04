@@ -1,31 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectItem, SelectTrigger, SelectContent } from "@/components/ui/select";
+import axios from "axios";
 
 const AdminSubjects = () => {
-  const [departments] = useState(["Computer Science", "Mechanical", "Civil", "Electronics"]);
-  const [semesters] = useState(["1st Semester", "2nd Semester", "3rd Semester", "4th Semester", "5th Semester", "6th Semester", "7th Semester", "8th Semester"]);
-  const [subjects, setSubjects] = useState([]);
+  const [departments, setDepartments] = useState([]); // Fetch departments from API
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedSemester, setSelectedSemester] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [subjectCode, setSubjectCode] = useState("");
   const [subjectName, setSubjectName] = useState("");
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleAddSubject = () => {
-    if (selectedDepartment && selectedSemester && subjectName) {
-      setSubjects([
-        ...subjects,
-        { id: Date.now(), department: selectedDepartment, semester: selectedSemester, name: subjectName },
-      ]);
-      setSubjectName("");
-    } else {
+  // Fetch departments on initial load
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/departments");
+        if (response.data.success && Array.isArray(response.data.departments)) {
+          setDepartments(response.data.departments);
+        } else {
+          console.error("Invalid response format for departments:", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
+  // Fetch subjects on initial load
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/subjects");
+        setSubjects(response.data);
+      } catch (error) {
+        console.error("Error fetching subjects:", error);
+      }
+    };
+
+    fetchSubjects();
+  }, []);
+
+  // Add a new subject
+  const handleAddSubject = async () => {
+    if (!selectedDepartment || !selectedYear || !subjectCode || !subjectName) {
       alert("Please fill all fields before adding the subject.");
+      return;
+    }
+
+    setLoading(true); // Start loading
+    try {
+      const response = await axios.post("http://localhost:5000/api/admin/subjects", {
+        subjectName,
+        subjectCode,
+        department: selectedDepartment,
+        year: selectedYear,
+      });
+
+      setSubjects([...subjects, response.data.subject]);
+      setSubjectCode("");
+      setSubjectName("");
+      setSelectedDepartment("");
+      setSelectedYear("");
+    } catch (error) {
+      console.error("Error adding subject:", error);
+      alert(error.response?.data?.message || "Failed to add subject. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
-  const handleDeleteSubject = (id) => {
-    setSubjects(subjects.filter((subject) => subject.id !== id));
+  // Delete a subject
+  const handleDeleteSubject = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/subjects/${id}`);
+      setSubjects(subjects.filter((subject) => subject._id !== id));
+    } catch (error) {
+      console.error("Error deleting subject:", error);
+      alert(error.response?.data?.message || "Failed to delete subject. Please try again.");
+    }
   };
 
   return (
@@ -35,46 +93,51 @@ const AdminSubjects = () => {
       {/* Select Department */}
       <div className="mb-4">
         <Label className="block text-sm font-semibold mb-2">Select Department</Label>
-        <Select
-          onValueChange={(value) => setSelectedDepartment(value)}
-          value={selectedDepartment}
-        >
+        <Select onValueChange={(value) => setSelectedDepartment(value)} value={selectedDepartment}>
           <SelectTrigger className="w-full">
             <span>{selectedDepartment || "Select Department"}</span>
           </SelectTrigger>
           <SelectContent>
             {departments.map((dept) => (
-              <SelectItem key={dept} value={dept}>
-                {dept}
+              <SelectItem key={dept._id} value={dept.department}>
+                {dept.department}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Select Semester */}
+      {/* Select Year */}
       <div className="mb-4">
-        <Label className="block text-sm font-semibold mb-2">Select Semester</Label>
-        <Select
-          onValueChange={(value) => setSelectedSemester(value)}
-          value={selectedSemester}
-        >
+        <Label className="block text-sm font-semibold mb-2">Select Year</Label>
+        <Select onValueChange={(value) => setSelectedYear(value)} value={selectedYear}>
           <SelectTrigger className="w-full">
-            <span>{selectedSemester || "Select Semester"}</span>
+            <span>{selectedYear || "Select Year"}</span>
           </SelectTrigger>
           <SelectContent>
-            {semesters.map((sem) => (
-              <SelectItem key={sem} value={sem}>
-                {sem}
-              </SelectItem>
-            ))}
+            <SelectItem value="1st Year">1st Year</SelectItem>
+            <SelectItem value="2nd Year">2nd Year</SelectItem>
+            <SelectItem value="3rd Year">3rd Year</SelectItem>
+            <SelectItem value="4th Year">4th Year</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* Add Subject */}
+      {/* Subject Code */}
       <div className="mb-4">
-        <Label className="block text-sm font-semibold mb-2">Add Subject Name</Label>
+        <Label className="block text-sm font-semibold mb-2">Subject Code</Label>
+        <Input
+          type="text"
+          value={subjectCode}
+          onChange={(e) => setSubjectCode(e.target.value)}
+          placeholder="Enter subject code"
+          className="w-full"
+        />
+      </div>
+
+      {/* Subject Name */}
+      <div className="mb-4">
+        <Label className="block text-sm font-semibold mb-2">Subject Name</Label>
         <Input
           type="text"
           value={subjectName}
@@ -86,33 +149,35 @@ const AdminSubjects = () => {
 
       {/* Add Button */}
       <div className="mb-6">
-        <Button onClick={handleAddSubject} className="w-full  text-white">
-          Add Subject
+        <Button onClick={handleAddSubject} className="w-full text-white" disabled={loading}>
+          {loading ? "Adding..." : "Add Subject"}
         </Button>
       </div>
 
       {/* Subjects Table */}
-      <div className="overflow-x-auto ">
+      <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-200">
           <thead>
             <tr className="bg-gray-100">
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">ID</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Department</th>
-              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Semester</th>
+              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Year</th>
+              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Subject Code</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Subject Name</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
             {subjects.map((subject) => (
-              <tr key={subject.id}>
-                <td className="px-4 py-2 border border-gray-300">{subject.id}</td>
+              <tr key={subject._id}>
+                <td className="px-4 py-2 border border-gray-300">{subject._id}</td>
                 <td className="px-4 py-2 border border-gray-300">{subject.department}</td>
-                <td className="px-4 py-2 border border-gray-300">{subject.semester}</td>
-                <td className="px-4 py-2 border border-gray-300">{subject.name}</td>
+                <td className="px-4 py-2 border border-gray-300">{subject.year}</td>
+                <td className="px-4 py-2 border border-gray-300">{subject.subjectCode}</td>
+                <td className="px-4 py-2 border border-gray-300">{subject.subjectName}</td>
                 <td className="px-4 py-2 border border-gray-300">
                   <Button
-                    onClick={() => handleDeleteSubject(subject.id)}
+                    onClick={() => handleDeleteSubject(subject._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
                   >
                     Delete

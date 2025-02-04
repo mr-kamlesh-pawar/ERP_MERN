@@ -7,18 +7,13 @@ import { User, School, Phone, MapPin, Calendar } from "lucide-react"; // Add luc
 
 const AdminProfile = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    userName: "",
     email: "",
-    password: "",
-    fullName: "",
-    mobileNo: "",
-    designation: "",
     department: "",
-    employeeId: "",
-    dateOfJoining: "",
+    dob: "",
+    joiningYear: "",
+    avatar: "",
     contactNumber: "",
-    officeAddress: "",
-    profilePhoto: "",
   });
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -27,8 +22,10 @@ const AdminProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/api/user"); // Replace with your API route
-        setFormData(response.data);
+        const response = await axios.get("http://localhost:5000/api/admin/profile", {
+          withCredentials: true, // Send cookies with the request
+        });
+        setFormData(response.data); // Populate formData with fetched data
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -50,7 +47,13 @@ const AdminProfile = () => {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      await axios.put("/api/user", formData); // Replace with your API route
+      await axios.put(
+        "http://localhost:5000/api/admin/profile",
+        formData,
+        {
+          withCredentials: true, // Send cookies with the request
+        }
+      );
       alert("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -115,7 +118,7 @@ const AdminProfile = () => {
 
             <TabsContent value="account">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["username", "fullName", "mobileNo"].map((field) => (
+                {["userName", "email",].map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label
                       htmlFor={field}
@@ -126,7 +129,7 @@ const AdminProfile = () => {
                     <Input
                       id={field}
                       name={field}
-                      type={field === "password" ? "password" : "text"}
+                      type={"text"}
                       placeholder={`Enter your ${field}`}
                       value={formData[field]}
                       onChange={handleChange}
@@ -146,7 +149,7 @@ const AdminProfile = () => {
 
             <TabsContent value="educational">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["department", "designation"].map((field) => (
+                {["department"].map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label
                       htmlFor={field}
@@ -208,7 +211,7 @@ const AdminProfile = () => {
 
             <TabsContent value="work">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["employeeId", "dateOfJoining"].map((field) => (
+                {["joiningYear"].map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label
                       htmlFor={field}
@@ -219,7 +222,7 @@ const AdminProfile = () => {
                     <Input
                       id={field}
                       name={field}
-                      type={field === "dateOfJoining" ? "date" : "text"}
+                      type="text"
                       placeholder={`Enter your ${field}`}
                       value={formData[field]}
                       onChange={handleChange}
@@ -239,7 +242,7 @@ const AdminProfile = () => {
 
             <TabsContent value="address">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["officeAddress"].map((field) => (
+                {["dob"].map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label
                       htmlFor={field}

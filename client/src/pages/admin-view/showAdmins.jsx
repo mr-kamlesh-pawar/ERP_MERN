@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ChartNoAxesGantt, Pencil, Plus, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const ShowAdmins = () => {
   const [admins, setAdmins] = useState([]);
@@ -11,37 +11,72 @@ const ShowAdmins = () => {
   const [action, setAction] = useState("create");
   const [adminData, setAdminData] = useState({
     id: null,
-    name: "",
+    userName: "",
     email: "",
     password: "",
-    authority: "",
-    profilePhoto: "",
   });
 
+  // Fetch all admins from the backend
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/admins");
+        setAdmins(response.data.admins);
+      } catch (error) {
+        console.error("Error fetching admins:", error);
+      }
+    };
+    fetchAdmins();
+  }, []);
+
   // Handle Create/Update
-  const handleSaveAdmin = () => {
-    if (action === "create") {
-      setAdmins([...admins, { ...adminData, id: Date.now() }]);
-    } else if (action === "update") {
-      setAdmins(
-        admins.map((admin) =>
-          admin.id === adminData.id ? { ...adminData } : admin
-        )
-      );
+  const handleSaveAdmin = async () => {
+    try {
+      if (action === "create") {
+        // Create a new admin
+        const response = await axios.post("http://localhost:5000/api/admin/admins", adminData);
+        setAdmins([...admins, response.data.admin]);
+      } else if (action === "update") {
+        // Update an existing admin
+        const response = await axios.put(
+          `http://localhost:5000/api/admin/admins/${adminData.id}`,
+          adminData
+        );
+        setAdmins(admins.map((admin) => (admin._id === adminData.id ? response.data.admin : admin)));
+      }
+      setShowModal(false);
+      setAdminData({
+        id: null,
+        userName: "",
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      console.error("Error saving admin:", error);
     }
-    setShowModal(false);
-    setAdminData({ id: null, name: "", email: "", password: "", authority: "", profilePhoto: "" });
   };
 
   // Handle Delete
-  const handleDeleteAdmin = (id) => {
-    setAdmins(admins.filter((admin) => admin.id !== id));
+  const handleDeleteAdmin = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/admins/${id}`);
+      setAdmins(admins.filter((admin) => admin._id !== id));
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+    }
   };
 
   // Open Modal for Create or Update
   const openModal = (admin = null, actionType = "create") => {
     setAction(actionType);
-    setAdminData(admin || { id: null, name: "", email: "", password: "", authority: "", profilePhoto: "" });
+    setAdminData(
+      admin || {
+        id: null,
+        userName: "",
+        email: "",
+        password: "",
+      }
+    );
     setShowModal(true);
   };
 
@@ -51,7 +86,10 @@ const ShowAdmins = () => {
 
       {/* Action Buttons */}
       <div className="flex justify-end gap-4 mb-6">
-        <Button onClick={() => openModal(null, "create")} className="text-white bg-blue-800 flex items-center font-bold">
+        <Button
+          onClick={() => openModal(null, "create")}
+          className="text-white bg-blue-800 flex items-center font-bold"
+        >
           <Plus size={44} strokeWidth={3} />
           Create Admin
         </Button>
@@ -65,22 +103,26 @@ const ShowAdmins = () => {
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">ID</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Name</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Email</th>
-              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Authority</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
             {admins.map((admin) => (
-              <tr key={admin.id}>
-                <td className="px-4 py-2 border border-gray-300">{admin.id}</td>
-                <td className="px-4 py-2 border border-gray-300">{admin.name}</td>
+              <tr key={admin._id}>
+                <td className="px-4 py-2 border border-gray-300">{admin._id}</td>
+                <td className="px-4 py-2 border border-gray-300">{admin.userName}</td>
                 <td className="px-4 py-2 border border-gray-300">{admin.email}</td>
-                <td className="px-4 py-2 border border-gray-300">{admin.authority}</td>
                 <td className="px-4 py-2 border border-gray-300">
-                  <Button onClick={() => openModal(admin, "update")} className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600">
+                  <Button
+                    onClick={() => openModal(admin, "update")}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600"
+                  >
                     <Pencil /> Update
                   </Button>
-                  <Button onClick={() => handleDeleteAdmin(admin.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2">
+                  <Button
+                    onClick={() => handleDeleteAdmin(admin._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2"
+                  >
                     <Trash2 /> Delete
                   </Button>
                 </td>
@@ -99,14 +141,14 @@ const ShowAdmins = () => {
             </h2>
 
             <div className="mb-4">
-              <Label htmlFor="name" className="block text-sm font-semibold text-gray-700">
+              <Label htmlFor="userName" className="block text-sm font-semibold text-gray-700">
                 UserName
               </Label>
               <Input
-                id="name"
+                id="userName"
                 type="text"
-                value={adminData.name}
-                onChange={(e) => setAdminData({ ...adminData, name: e.target.value })}
+                value={adminData.userName}
+                onChange={(e) => setAdminData({ ...adminData, userName: e.target.value })}
                 className="mt-2 w-full"
               />
             </div>
@@ -135,32 +177,6 @@ const ShowAdmins = () => {
                 value={adminData.password}
                 onChange={(e) => setAdminData({ ...adminData, password: e.target.value })}
                 disabled={action === "update"}
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label htmlFor="authority" className="block text-sm font-semibold text-gray-700">
-                Authority
-              </Label>
-              <Input
-                id="authority"
-                type="text"
-                value={adminData.authority}
-                onChange={(e) => setAdminData({ ...adminData, authority: e.target.value })}
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label htmlFor="profilePhoto" className="block text-sm font-semibold text-gray-700">
-                Profile Photo URL
-              </Label>
-              <Input
-                id="profilePhoto"
-                type="text"
-                value={adminData.profilePhoto}
-                onChange={(e) => setAdminData({ ...adminData, profilePhoto: e.target.value })}
                 className="mt-2 w-full"
               />
             </div>

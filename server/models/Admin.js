@@ -22,9 +22,28 @@ const adminSchema= new mongoose.Schema({
 
         },
 
+        department: {
+            type: String,
+          },
+          dob: {
+            type: String,
+          },
+          joiningYear: {
+            type: String,
+          },
+          avatar: {
+            type: String,
+          },
+          contactNumber: {
+            type: Number,
+          },
+          passwordUpdated: {
+            type: Boolean,
+            default: false,
+          },
 
         
-});
+},  { strict: false });
 
 const Admin= mongoose.model('Admin', adminSchema);
 module.exports= Admin;

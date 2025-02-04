@@ -1,51 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectItem, SelectTrigger, SelectContent, SelectLabel } from "@/components/ui/select";
 import { Pencil, Plus, Trash2 } from "lucide-react";
+import axios from "axios";
 
 const AdminDepartment = () => {
   const [departments, setDepartments] = useState([]);
   const [action, setAction] = useState("create");
-  const [departmentData, setDepartmentData] = useState({ id: null, name: "", classes: [] });
+  const [departmentData, setDepartmentData] = useState({
+    id: null,
+    department: "",
+    departmentCode: "",
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch all departments from the backend
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/admin/departments");
+        setDepartments(response.data.departments);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
+    };
+    fetchDepartments();
+  }, []);
+
   // Handle Save Department
-  const handleSaveDepartment = () => {
-    if (action === "create") {
-      setDepartments([...departments, { ...departmentData, id: Date.now() }]);
-    } else if (action === "update") {
-      setDepartments(
-        departments.map((dept) => (dept.id === departmentData.id ? { ...departmentData } : dept))
-      );
+  const handleSaveDepartment = async () => {
+    try {
+      if (action === "create") {
+        // Create a new department
+        const response = await axios.post("http://localhost:5000/api/admin/departments", departmentData);
+        setDepartments([...departments, response.data.department]);
+      } else if (action === "update") {
+        // Update an existing department
+        const response = await axios.put(
+          `http://localhost:5000/api/admin/departments/${departmentData.id}`,
+          departmentData
+        );
+        setDepartments(
+          departments.map((dept) =>
+            dept._id === departmentData.id ? response.data.department : dept
+          )
+        );
+      }
+      closeModal();
+    } catch (error) {
+      console.error("Error saving department:", error);
     }
-    closeModal();
   };
 
   // Handle Delete Department
-  const handleDeleteDepartment = (id) => {
-    setDepartments(departments.filter((dept) => dept.id !== id));
+  const handleDeleteDepartment = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/departments/${id}`);
+      setDepartments(departments.filter((dept) => dept._id !== id));
+    } catch (error) {
+      console.error("Error deleting department:", error);
+    }
   };
 
   // Open Modal for Create/Update Department
   const openModal = (department = null, actionType = "create") => {
     setAction(actionType);
-    setDepartmentData(department || { id: null, name: "", classes: [] });
-    setIsModalOpen(true);
-  };
-
-  // Open Modal to view Department details
-  const openViewDepartmentModal = (department) => {
-    setAction("view");
-    setDepartmentData(department);
+    setDepartmentData(
+      department
+        ? { id: department._id, department: department.department, departmentCode: department.departmentCode }
+        : { id: null, department: "", departmentCode: "" }
+    );
     setIsModalOpen(true);
   };
 
   // Close Modal
   const closeModal = () => {
     setIsModalOpen(false);
-    setDepartmentData({ id: null, name: "", classes: [] });
+    setDepartmentData({
+      id: null,
+      department: "",
+      departmentCode: "",
+    });
   };
 
   return (
@@ -70,23 +106,16 @@ const AdminDepartment = () => {
             <tr className="bg-gray-100">
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">ID</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Department</th>
-              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Classes</th>
+              <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Department Code</th>
               <th className="px-4 py-2 border border-gray-300 text-sm sm:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
             {departments.map((department) => (
-              <tr key={department.id}>
-                <td className="px-4 py-2 border border-gray-300">{department.id}</td>
-                <td
-                  className="px-4 py-2 border border-gray-300 text-blue-600 cursor-pointer"
-                  onClick={() => openViewDepartmentModal(department)}
-                >
-                  {department.name}
-                </td>
-                <td className="px-4 py-2 border border-gray-300">
-                  {department.classes.join(", ")}
-                </td>
+              <tr key={department._id}>
+                <td className="px-4 py-2 border border-gray-300">{department._id}</td>
+                <td className="px-4 py-2 border border-gray-300">{department.department}</td>
+                <td className="px-4 py-2 border border-gray-300">{department.departmentCode}</td>
                 <td className="px-4 py-2 border border-gray-300">
                   <Button
                     onClick={() => openModal(department, "update")}
@@ -95,7 +124,7 @@ const AdminDepartment = () => {
                     <Pencil /> Update
                   </Button>
                   <Button
-                    onClick={() => handleDeleteDepartment(department.id)}
+                    onClick={() => handleDeleteDepartment(department._id)}
                     className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 ml-2"
                   >
                     <Trash2 /> Delete
@@ -108,9 +137,9 @@ const AdminDepartment = () => {
       </div>
 
       {/* Modal for Create/Update Department */}
-      {isModalOpen && action !== "view" && (
+      {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
           onClick={closeModal}
         >
           <div
@@ -122,27 +151,31 @@ const AdminDepartment = () => {
             </h2>
 
             <div className="mb-4">
-              <Label htmlFor="name" className="block text-sm font-semibold text-gray-700">
+              <Label htmlFor="department" className="block text-sm font-semibold text-gray-700">
                 Department Name
               </Label>
               <Input
-                id="name"
+                id="department"
                 type="text"
-                value={departmentData.name}
-                onChange={(e) => setDepartmentData({ ...departmentData, name: e.target.value })}
+                value={departmentData.department}
+                onChange={(e) =>
+                  setDepartmentData({ ...departmentData, department: e.target.value })
+                }
                 className="mt-2 w-full"
               />
             </div>
 
             <div className="mb-4">
-              <Label htmlFor="classes" className="block text-sm font-semibold text-gray-700">
-                Classes (comma separated)
+              <Label htmlFor="departmentCode" className="block text-sm font-semibold text-gray-700">
+                Department Code
               </Label>
               <Input
-                id="classes"
+                id="departmentCode"
                 type="text"
-                value={departmentData.classes.join(", ")}
-                onChange={(e) => setDepartmentData({ ...departmentData, classes: e.target.value.split(",") })}
+                value={departmentData.departmentCode}
+                onChange={(e) =>
+                  setDepartmentData({ ...departmentData, departmentCode: e.target.value })
+                }
                 className="mt-2 w-full"
               />
             </div>
@@ -153,53 +186,6 @@ const AdminDepartment = () => {
               </Button>
               <Button onClick={handleSaveDepartment} className="bg-blue-600 text-white">
                 Save
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal for View Department */}
-      {isModalOpen && action === "view" && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white p-6 rounded-lg w-96"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-bold mb-4">Department Details</h2>
-
-            <div className="mb-4">
-              <Label htmlFor="name" className="block text-sm font-semibold text-gray-700">
-                Department Name
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                value={departmentData.name}
-                readOnly
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="mb-4">
-              <Label htmlFor="classes" className="block text-sm font-semibold text-gray-700">
-                Classes
-              </Label>
-              <Input
-                id="classes"
-                type="text"
-                value={departmentData.classes.join(", ")}
-                readOnly
-                className="mt-2 w-full"
-              />
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <Button onClick={closeModal} className="bg-gray-600 text-white">
-                Close
               </Button>
             </div>
           </div>
