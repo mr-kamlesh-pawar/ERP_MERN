@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -33,6 +33,45 @@ ChartJS.register(
 );
 
 const FacultyDashboard = () => {
+
+
+// State to store counts
+const [counts, setCounts] = useState({
+  students: 0,
+  faculties: 0,
+  departments: 0,
+  subjects:0
+});
+
+// Fetch counts from API
+useEffect(() => {
+  const fetchCounts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/faculty/dashboard/counts");
+      const data = await response.json();
+
+      if (data.success) {
+        setCounts({
+          students: data.counts.students,
+          faculties: data.counts.faculties,
+          departments: data.counts.departments,
+          subjects: data.counts.subjects,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
+  };
+
+  fetchCounts();
+}, []);
+
+
+
+
+
+
+
   const data = {
     labels: ["2019", "2020", "2021", "2022", "2023", "2024", "2025"],
     datasets: [
@@ -60,10 +99,10 @@ const FacultyDashboard = () => {
   };
 
   const stats = [
-    { icon: <Users className="text-gray-400" />, label: "Total Students", value: "30K+", color: "text-blue-700" },
-    { icon: <Eye className="text-gray-400" />, label: "Total Departments", value: "15+", color: "text-purple-700" },
-    { icon: <Cloud className="text-gray-400" />, label: "Total Teachers", value: "100+", color: "text-green-600" },
-    { icon: <TrendingUp className="text-gray-400" />, label: "Fees Collections", value: "500K+", color: "text-red-600" },
+    { icon: <Users className="text-gray-400" />, label: "Total Students", value: `${counts.students}+`, color: "text-blue-700" },
+    { icon: <Eye className="text-gray-400" />, label: "Total Departments", value: `${counts.departments}+`, color: "text-purple-700" },
+    { icon: <Cloud className="text-gray-400" />, label: "Total Teachers", value: `${counts.faculties}+`, color: "text-green-600" },
+    { icon: <TrendingUp className="text-gray-400" />, label: "Total Subjects", value: `${counts.subjects}+`, color: "text-red-600" },
   ];
 
   const socialMedia = [
@@ -73,6 +112,8 @@ const FacultyDashboard = () => {
     { icon: <Instagram className="text-pink-500" />, name: "Instagram", description: "Share photos, explore trends, and connect with visual storytellers worldwide." },
   ];
 
+
+ 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold text-center mb-6">Dashboard</h1>

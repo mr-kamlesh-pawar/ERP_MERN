@@ -1,4 +1,4 @@
-import { BellRing, BookOpen, Building, ChartNoAxesCombined, DeleteIcon, Eye, LucideDelete, Plus, RecycleIcon, Trash2, User, UserPlus, Users } from "lucide-react";
+import { BellRing, BookOpen, Building, Calendar, ChartNoAxesCombined, Clock, DeleteIcon, Eye, LucideDelete, Plus, RecycleIcon, Trash2, User, UserPlus, Users } from "lucide-react";
 import React, { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { BadgeCheck, LayoutDashboard, ShoppingBasket } from "lucide-react";
@@ -16,6 +16,12 @@ const facultySidebarMenuItems = [
     label: "Profile",
     path: "/faculty/profile",
     icon: <User />,
+  },
+  {
+    id: "all-stud",
+    label: "All Students",
+    path: "/faculty/stud-info",
+    icon: <BellRing />,
   },
   {
     id: "attendance",
@@ -38,31 +44,50 @@ const facultySidebarMenuItems = [
     icon: <Building />,
   },
 
-  // {
-  //   id: "our-fac",
-  //   label: "Our faculty",
-  //   path: "/faculty/our-faculty",
-  //   icon: <Users />,
-  // },
+  {
+    id: "timetable",
+    label: "Time Table",
+    path: "/faculty/timetable",
+    icon: <Clock />,
+  },
 
-  // {
-  //   id: "students",
-  //   label: "Our Students",
-  //   path: "/faculty/students",
-  //   icon: <Eye />,
-  // },
-  // {
-  //   id: "subjects",
-  //   label: "Subjects ",
-  //   path: "/faculty/subjects",
-  //   icon: <BookOpen />,
-  // },
-  // {
-  //   id: "events",
-  //   label: "New Events ",
-  //   path: "/faculty/events",
-  //   icon: <Plus />,
-  // },
+  {
+    id: "create-notice",
+    label: "Create Notice",
+    path: "/faculty/create-notice",
+    icon: <BookOpen />,
+  },
+  {
+    id: "show-notices",
+    label: "Show Notices ",
+    path: "/faculty/show-notices",
+    icon: <Eye />,
+  },
+
+  {
+    id: "create-test",
+    label: "Create Test ",
+    path: "/faculty/create-test",
+    icon: <Plus />,
+  },
+  {
+    id: "test-result",
+    label: "Test Result ",
+    path: "/faculty/test-result",
+    icon: <Eye />,
+  },
+  {
+    id: "event ",
+    label: "Event ",
+    path: "/faculty/event",
+    icon: <Calendar />,
+  },
+  {
+    id: "Fees",
+    label: "Fees Structure ",
+    path: "/faculty/fees",
+    icon: <Eye />,
+  },
 
 ];
 

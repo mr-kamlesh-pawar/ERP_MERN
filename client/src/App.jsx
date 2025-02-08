@@ -30,6 +30,10 @@ import MarkAttendance from "./pages/faculty-view/attendance";
 import UploadNotes from "./pages/faculty-view/uploadNotes";
 import FacultyProfile from "./pages/faculty-view/profile";
 import NotesList from "./pages/faculty-view/NotesList";
+import TimeTable from "./pages/faculty-view/timeTable";
+import AllStudents from "./pages/faculty-view/allStudents";
+import CreateNotice from "./pages/faculty-view/createNotice";
+import DisplayNotice from "./pages/faculty-view/displayNotice";
 
 
 function App() {
@@ -105,6 +109,10 @@ function App() {
           <Route path="upload-notes" element={<UploadNotes/>} />
           <Route path="profile" element={<FacultyProfile/>} />
           <Route path="notes-list" element={<NotesList/>} />
+          <Route path="timetable" element={<TimeTable/>} />
+          <Route path="stud-info" element={<AllStudents/>} />
+          <Route path="create-notice" element={<CreateNotice/>} />
+          <Route path="show-notices" element={<DisplayNotice/>} />
         </Route>
 
         {/* Students Routes */}

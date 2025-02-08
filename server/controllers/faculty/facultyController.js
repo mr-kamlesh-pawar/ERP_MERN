@@ -18,6 +18,8 @@ const fs = require("fs");
 const path = require("path");
 const Notes = require("../../models/Note.js");
 const cloudinary = require("../../utils/cloudinary.js");
+const Timetable = require("../../models/Timetable.js");
+const Notice = require("../../models/Notice.js");
 
 // export const updatedPassword = async (req, res) => {
 //   try {
@@ -550,17 +552,173 @@ const uploadNotes = async (req, res) => {
   }
 };
 
+// Fetch students based on faculty's department and selected class
+const getStudents = async (req, res) => {
+  try {
+    console.log("Request User:", req.user); // Debugging line
+    const { class1: selectedClass } = req.body;
+
+    // Get faculty's department from req.user
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: 'Faculty not found' });
+    }
+
+    // Fetch students based on department & selected class
+    const students = await Student.find({
+      department: faculty.department,
+      class1: selectedClass,
+    }).select('rollNo name email');
+
+    res.status(200).json({ students });
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const uploadTimetable = async (req, res) => {
+  try {
+    const { option, year, classNumber } = req.body;
+
+    // Fetch faculty's department
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    // Upload file to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "Timetable", // Optional: Organize files in a folder
+      resource_type: "raw", // Automatically detect file type (PDF, DOC, etc.)
+    });
+
+    // Save file details to the database
+    const newFile = new Timetable({
+      option,
+      year,
+      department: faculty.department, // Use faculty's department
+      classNumber,
+      fileUrl: result.secure_url,
+      facultyId: req.user.id, // Associate with faculty
+    });
+
+    await newFile.save();
+    res.status(201).json({ message: "File uploaded successfully!", file: newFile });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).json({ message: "Error uploading file", error });
+  }
+};
+
+const getTimetable = async (req, res) => {
+  try {
+    // Fetch faculty's department
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    // Fetch files for the faculty's department
+    const files = await Timetable.find({ department: faculty.department });
+    res.status(200).json(files);
+  } catch (error) {
+    console.error("Error fetching files:", error);
+    res.status(500).json({ message: "Error fetching files", error });
+  }
+};
 
 
 
 
+// Create a new notice
+const createNotice = async (req, res) => {
+  try {
+    const { title, description, date, from, to } = req.body;
+    const newNotice = new Notice({ title, description, date, from, to });
+    await newNotice.save();
+    res.status(201).json({ success: true, notice: newNotice });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error creating notice" });
+  }
+};
+
+
+// Get all notices
+const getAllNotices = async (req, res) => {
+  try {
+    const notices = await Notice.find({from:"faculty"});
+    res.status(200).json({ success: true, notices });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching notices" });
+  }
+};
+
+// Update a notice by ID
+const updateNotice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, date, from, to } = req.body;
+    const updatedNotice = await Notice.findByIdAndUpdate(
+      id,
+      { title, description, date, from, to },
+      { new: true }
+    );
+    res.status(200).json({ success: true, notice: updatedNotice });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error updating notice" });
+  }
+};
+
+// Delete a notice by ID
+const deleteNotice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Notice.findByIdAndDelete(id);
+    res.status(200).json({ success: true, message: "Notice deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error deleting notice" });
+  }
+};
+
+
+// Get all getFacultyNotices
+const getFacultyNotices = async (req, res) => {
+  try {
+    // Fetch notices where 'to' is either "faculty" or "all"
+    const notices = await Notice.find({ to: { $in: ["faculty", "all"] } });
+
+    res.status(200).json({ success: true, notices });
+  } catch (error) {
+    console.error("Error fetching faculty notices:", error);
+    res.status(500).json({ success: false, message: "Error fetching notices" });
+  }
+};
 
 
 
+// Get counts for students, faculties, and departments
+const DashboardCount= async (req, res) => {
+  try {
+    const totalStudents = await Student.countDocuments();
+    const totalFaculties = await Faculty.countDocuments();
+    const totalDepartments = await Department.countDocuments();
+    const totalSubjects = await Subject.countDocuments();
 
-
-
-
+    res.status(200).json({
+      success: true,
+      counts: {
+        students: totalStudents,
+        faculties: totalFaculties,
+        departments: totalDepartments,
+        subjects: totalSubjects,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching counts:", error);
+    res.status(500).json({ success: false, message: "Error fetching data" });
+  }
+}
 
 
 
@@ -576,4 +734,17 @@ module.exports = {
   uploadNotes,
   getAllNotes,
   getAllSubjects,
+  getStudents,
+  uploadTimetable,
+  getTimetable,
+  deleteNotice,
+  updateNotice,
+  getAllNotices,
+  createNotice,
+  getFacultyNotices,
+  DashboardCount
+
+
+
+
 };
