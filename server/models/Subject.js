@@ -23,10 +23,7 @@ const subjectSchema= new mongoose.Schema({
         type: String,
         required: true,
       },
-      attendence: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Attendence",
-      },
+      
 
 
         

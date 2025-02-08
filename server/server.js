@@ -8,6 +8,7 @@ const cors = require('cors');
 // const adminProductsRoute = require("./routes/admin/products-routes")
 const PORT = process.env.PORT;
 const adminRoutes = require('./routes/admin/adminRoutes')
+const facultyRoutes = require('./routes/faculty/facultyRoutes')
 app.use(cors({
     'origin': 'http://localhost:5173',
     'methods': ['GET', 'PUT', 'POST', 'DELETE'],
@@ -24,6 +25,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRoutes);
+app.use('/api/faculty', facultyRoutes);
+
+//http://localhost:5000/api/faculty/mark-attendance
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

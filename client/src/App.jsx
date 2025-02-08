@@ -5,19 +5,13 @@ import AuthRegister from "./pages/auth/register";
 import AdminLayout from "./components/admin-view/layout";
 import AdminDashboard from "./pages/admin-view/dashboard";
 import AdminProducts from "./pages/admin-view/products";
-import AdminOrders from "./pages/admin-view/orders";
-import ShoppingLayout from "./components/shopping-view/layout";
 import NotFound from "./pages/not-found";
-import ShoppingAccount from "./pages/shopping-view/account";
-import ShoppingHome from "./pages/shopping-view/home";
-import ShoppingListing from "./pages/shopping-view/listing";
-import ShoppingCheckout from "./pages/shopping-view/checkout";
 import CheckAuth from "./components/common/check-auth";
 import UnAuthPage from "./pages/unauth-page";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { checkAuth } from "./store/auth-slice";
-import { Skeleton } from "@/components/ui/skeleton";
+//import { Skeleton } from "@/components/ui/skeleton";
 import AdminProfile from "./pages/admin-view/profile";
 import AdminNotice from "./pages/admin-view/notice";
 import ShowAdmins from "./pages/admin-view/showAdmins";
@@ -26,8 +20,20 @@ import AdminOurFaculty from "./pages/admin-view/adminOurFaculty";
 import AdminStudents from "./pages/admin-view/adminStudents";
 import AdminSubjects from "./pages/admin-view/adminSubjects";
 import AdminEvents from "./pages/admin-view/adminEvents";
+import FacultyDashboard from "./pages/faculty-view/dashboard";
+import FacultyLayout from "./components/faculty-view/layout";
+import StudentLayout from "./components/student-view/layout";
+import StudentDashboard from "./pages/student-view/dashboard";
+import LoadingScreen from "./pages/loading";
+import MarkAttendance from "./pages/faculty-view/attendance";
+//import GetAttendance from "./pages/faculty-view/uploadNotes";
+import UploadNotes from "./pages/faculty-view/uploadNotes";
+import FacultyProfile from "./pages/faculty-view/profile";
+import NotesList from "./pages/faculty-view/NotesList";
+
 
 function App() {
+  
   const { isAuthenticated, user, isLoading } = useSelector(
     (state) => state.auth
   );
@@ -37,14 +43,14 @@ function App() {
   const location = useLocation();
 
   if (location.pathname === "/") {
-    navigate("/shop/home");
+    navigate("/auth/login");
   }
 
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (isLoading) return <Skeleton className="w-full h-screen bg-black" />;
+  if (isLoading) return <LoadingScreen/>;
 
   console.log(isLoading, user);
 
@@ -80,25 +86,40 @@ function App() {
           <Route path="show-admin" element={<ShowAdmins />} />
           <Route path="department" element={<AdminDepartment />} />
           <Route path="our-faculty" element={<AdminOurFaculty />} />
-          <Route path="students" element={<AdminStudents />} />
+          <Route path="our-stud" element={<AdminStudents />} />
           <Route path="subjects" element={<AdminSubjects />} />
           <Route path="events" element={<AdminEvents />} />
         </Route>
 
+        {/* Faculty Routes */}
         <Route
-          path="/shop"
+          path="/faculty"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
-              <ShoppingLayout />
+              <FacultyLayout />
             </CheckAuth>
           }
         >
-          <Route path="account" element={<ShoppingAccount />} />
-          <Route path="home" element={<ShoppingHome />} />
-          <Route path="listing" element={<ShoppingListing />} />
-          <Route path="checkout" element={<ShoppingCheckout />} />
+          <Route path="dashboard" element={<FacultyDashboard />} />
+          <Route path="attendance" element={<MarkAttendance />} />
+          <Route path="upload-notes" element={<UploadNotes/>} />
+          <Route path="profile" element={<FacultyProfile/>} />
+          <Route path="notes-list" element={<NotesList/>} />
         </Route>
 
+        {/* Students Routes */}
+        <Route
+          path="/student"
+          element={
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+              <StudentLayout />
+            </CheckAuth>
+          }
+        >
+          <Route path="dashboard" element={<StudentDashboard />} />
+         
+        </Route>
+    
         <Route path="*" element={<NotFound />} />
         <Route path="/unauth-page" element={<UnAuthPage />} />
       </Routes>

@@ -7,15 +7,24 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
   console.log(location.pathname, isAuthenticated);
 
   //check if user is authenticated
-  if (
-    !isAuthenticated &&
-    !(
-      location.pathname.includes("/login") ||
-      location.pathname.includes("/register")
-    )
-  ) {
-    return <Navigate to="/auth/login" />;
+ // Redirect to dashboard if authenticated and trying to access login/register
+if (isAuthenticated && (location.pathname.includes("/login") || location.pathname.includes("/register"))) {
+  if (user?.role === "admin") {
+    return <Navigate to="/admin/dashboard" />;
+  } else if (user?.role === "faculty") {
+    return <Navigate to="/faculty/dashboard" />;
+  } else {
+    return <Navigate to="/student/dashboard" />;
   }
+}
+
+
+
+// Redirect to login if not authenticated
+if (!isAuthenticated && !location.pathname.includes("/auth")) {
+  return <Navigate to="/auth/login" />;
+}
+
 
   //check if user is authenticated not show login and register page
   if (
@@ -25,8 +34,12 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
   ) {
     if (user?.role === "admin") {
       return <Navigate to="/admin/dashboard" />;
-    } else {
-      return <Navigate to="/shop/home" />;
+    } 
+    else if (user?.role === "faculty") {
+      return <Navigate to="/faculty/dashboard" />;
+    }
+    else {
+      return <Navigate to="/student/dashboard" />;
     }
   }
 
@@ -38,14 +51,33 @@ const CheckAuth = ({ isAuthenticated, user, children }) => {
   ) {
     return <Navigate to="/unauth-page" />;
   }
-  // if user is authenticated and is admin
+
   if (
     isAuthenticated &&
-    user?.role === "admin" &&
-    location.pathname.includes("/shop")
+    user?.role !== "faculty" &&
+    location.pathname.includes("/faculty")
   ) {
-    return <Navigate to="/admin/dashboard" />;
+    return <Navigate to="/unauth-page" />;
   }
+  if (
+    isAuthenticated &&
+    user?.role !== "student" &&
+    location.pathname.includes("/student")
+  ) {
+    return <Navigate to="/unauth-page" />;
+  }
+
+
+  // // if user is authenticated and is admin
+  // if (
+  //   isAuthenticated &&
+  //   user?.role === "admin" &&
+  //   location.pathname.includes("/shop")
+  // ) {
+  //   return <Navigate to="/admin/dashboard" />;
+  // }
+
+
 
   return <>{children}</>;
 };

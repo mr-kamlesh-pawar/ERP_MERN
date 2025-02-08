@@ -2,16 +2,16 @@ import { AlignJustify, LogOut } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 
-
 import { logoutUser } from "@/store/auth-slice";
 import { useDispatch } from "react-redux";
+ 
 
-const AdminHeader = ({ setOpen }) => {
+const FacultyHeader = ({ setOpen }) => {
+
   const dispatch = useDispatch();
   function handleLogout() {
     dispatch(logoutUser());
   }
-  
 
 
 
@@ -29,14 +29,13 @@ const AdminHeader = ({ setOpen }) => {
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7sWBeRmD_VE8NnpSuGNk1k7_cljm7fjuqdg&s" alt="" />
       <h1 className="font-semibold lg:text-xl   md:text-md sm:text-sm">Rasiklal M. Dhariwal Institute of Technology, Chinchwad </h1>
         </div>
-
         <Button className="inline-flex gap-2 items-center rounded-md px-4 py-2 text-sm font-medium shadow" onClick={handleLogout} >
-          Logout
-          <LogOut />
-        </Button>
+                 Logout
+                 <LogOut />
+               </Button>
       </div>
     </header>
   );
 };
 
-export default AdminHeader;
+export default FacultyHeader;

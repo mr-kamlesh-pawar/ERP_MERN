@@ -4,13 +4,17 @@ const Admin = require("../../models/Admin");
 const Student = require("../../models/Student");
 const Faculty = require("../../models/Faculty");
 
-// Register User
+//register
 const registerUser = async (req, res) => {
+
   const { userName, email, password, role } = req.body;
 
   try {
     // Check if the email or username already exists in any collection
-    const existingEmail = await Admin.findOne({ email }) || await Student.findOne({ email }) || await Faculty.findOne({ email });
+    const existingEmail =
+      (await Admin.findOne({ email })) ||
+      (await Student.findOne({ email })) ||
+      (await Faculty.findOne({ email }));
     if (existingEmail) {
       return res.status(400).json({
         success: false,
@@ -18,7 +22,10 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const existingUser = await Admin.findOne({ userName }) || await Student.findOne({ userName }) || await Faculty.findOne({ userName });
+    const existingUser =
+      (await Admin.findOne({ userName })) ||
+      (await Student.findOne({ userName })) ||
+      (await Faculty.findOne({ userName }));
     if (existingUser) {
       return res.status(400).json({
         success: false,
@@ -89,12 +96,12 @@ const loginUser = async (req, res) => {
     // Generate a JWT token
     const token = jwt.sign(
       {
-        id: user._id, // Ensure this matches the payload structure expected in authMiddleware
+        id: user._id,
         userName: user.userName,
         role: user.role,
         email: user.email,
       },
-      "JWT_SECRET_KEY",
+      "JWT_SECRET_KEY", // Replace with a secure secret key
       { expiresIn: "1h" }
     );
 
@@ -134,6 +141,7 @@ const logout = async (req, res) => {
   }
 };
 
+
 // Auth Middleware
 
 
@@ -156,7 +164,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Attach the decoded user information to the request object
     req.user = {
-      id: decoded.id, // Ensure this matches the payload structure when the token was created
+      id: decoded.id,
       userName: decoded.userName,
       role: decoded.role,
       email: decoded.email,
