@@ -1,13 +1,3 @@
-// import jwt from "jsonwebtoken";
-// import bcrypt from "bcryptjs";
-// import Faculty from "../../models/Faculty.js";
-//import Student from "../../models/Student.js";
-//import Subject from "../../models/Subject.js";
-// import Test from "../../models/Test.js"
-// import Marks from "../../models/Marks.js"
-// import Attendence from "../../models/Attendence.js"
-// import Department from "../../models/Department.js";
-
 const Department = require("../../models/Department");
 const Subject = require("../../models/Subject");
 const Student = require("../../models/Student");
@@ -20,6 +10,10 @@ const Notes = require("../../models/Note.js");
 const cloudinary = require("../../utils/cloudinary.js");
 const Timetable = require("../../models/Timetable.js");
 const Notice = require("../../models/Notice.js");
+const FeeStructure = require("../../models/FeeStructure.js");
+const  Test  = require("../../models/Test.js");
+const TestResult= require("../../models/Marks.js");
+
 
 // export const updatedPassword = async (req, res) => {
 //   try {
@@ -628,9 +622,6 @@ const getTimetable = async (req, res) => {
   }
 };
 
-
-
-
 // Create a new notice
 const createNotice = async (req, res) => {
   try {
@@ -642,7 +633,6 @@ const createNotice = async (req, res) => {
     res.status(500).json({ success: false, message: "Error creating notice" });
   }
 };
-
 
 // Get all notices
 const getAllNotices = async (req, res) => {
@@ -721,6 +711,144 @@ const DashboardCount= async (req, res) => {
 }
 
 
+// Upload fee structure
+const uploadFeeStructure = async (req, res) => {
+  try {
+    const { batch, year } = req.body;
+    //const fileUrl = req.file.path; // Cloudinary file URL
+
+    // Get the faculty's department from req.user.id
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    // Upload file to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "Fees", // Optional: Organize files in a folder
+      resource_type: "raw", // Automatically detect file type (PDF, DOC, etc.)
+    });
+
+    const newFeeStructure = new FeeStructure({
+      department: faculty.department,
+      batch,
+      year,
+      fileUrl: result.secure_url,
+      createdBy: req.user.id,
+    });
+
+    await newFeeStructure.save();
+    res.status(201).json(newFeeStructure);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get all fee structures for the faculty's department
+const getFeeStructures = async (req, res) => {
+  try {
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    const feeStructures = await FeeStructure.find({ department: faculty.department });
+    res.json(feeStructures);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+// Fetch departments and subjects
+const deptSub = async (req, res) => {
+  try {
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    const subjects = await Subject.find({ department: faculty.department });
+    res.status(200).json(subjects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Create Test
+const createTest = async (req, res) => {
+  try {
+    const { testTitle, totalMarks, subject, year, class1 } = req.body;
+
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: "Faculty not found" });
+    }
+
+    const newTest = new Test({
+      testTitle,
+      totalMarks,
+      department: faculty.department,
+      subject,
+      year,
+      class: class1,
+      createdBy: req.user.id,
+    });
+
+    await newTest.save();
+    res.status(201).json(newTest);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Fetch all tests
+const getTests= async (req, res) => {
+  try {
+    const tests = await Test.find({ createdBy: req.user.id });
+    res.status(200).json(tests);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+// Fetch students for a test
+const fetchStudentsForTest = async (req, res) => {
+  try {
+    const { testId } = req.params;
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
+    }
+
+    const students = await Student.find({
+      department: test.department,
+      year: test.year,
+      class1: test.class,
+    });
+
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Upload test results
+const uploadTestResult = async (req, res) => {
+  try {
+    const results = req.body;
+
+    const savedResults = await TestResult.insertMany(results);
+    res.status(201).json(savedResults);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 module.exports = {
   getAllDepartments,
@@ -742,7 +870,17 @@ module.exports = {
   getAllNotices,
   createNotice,
   getFacultyNotices,
-  DashboardCount
+  DashboardCount,
+  uploadFeeStructure,
+  getFeeStructures,
+  createTest,
+  uploadTestResult,
+  deptSub,
+  getTests,
+  fetchStudentsForTest,
+
+
+
 
 
 

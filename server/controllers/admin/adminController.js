@@ -711,6 +711,8 @@ const getEvents = async (req, res) => {
 const createEvent = async (req, res) => {
   try {
     const { title, date, location } = req.body;
+    //const createdBy= req.user.id;
+
     const newEvent = new Event({ title, date, location });
     await newEvent.save();
     res.status(201).json(newEvent);

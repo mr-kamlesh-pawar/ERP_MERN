@@ -1,19 +1,14 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 
-const marksSchema = new Schema({
-  exam: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Test",
-  },
-  student: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Student",
-  },
-  marks: {
-    type: Number,
-    default: -1,
-  },
+// Test Result Schema
+const testResultSchema = new mongoose.Schema({
+  testId: { type: mongoose.Schema.Types.ObjectId, ref: "Test", required: true },
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+  marksObtained: { type: Number, required: true },
+  totalMarks: { type: Number, required: true },
+  //createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Faculty", required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Marks", marksSchema);
+module.exports = mongoose.model("TestResult", testResultSchema);

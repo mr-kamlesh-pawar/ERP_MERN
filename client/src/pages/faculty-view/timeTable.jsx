@@ -17,7 +17,8 @@ const TimeTable = () => {
       try {
         const response = await axios.get("http://localhost:5000/api/faculty/get-timetable", {
           withCredentials: true,
-        });
+        }
+      );
         setUploadedFiles(response.data);
       } catch (err) {
         console.error("Error fetching files:", err);
@@ -91,6 +92,7 @@ const TimeTable = () => {
                 <option value="academic-calendar">Academic Calendar</option>
                 <option value="timetable">TimeTable</option>
               </select>
+              
               <select
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
@@ -102,6 +104,7 @@ const TimeTable = () => {
                 <option value="2nd-year">2nd Year</option>
                 <option value="3rd-year">3rd Year</option>
               </select>
+
               <select
                 value={classNumber}
                 onChange={(e) => setClassNumber(e.target.value)}

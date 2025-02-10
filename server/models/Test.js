@@ -1,35 +1,16 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const testSchema = mongoose.Schema({
-  test: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  subjectCode: {
-    type: String,
-    required: true,
-  },
-  department: {
-    type: String,
-    required: true,
-  },
-  totalMarks: {
-    type: Number,
-    default: 10,
-  },
-  year: {
-    type: String,
-    required: true,
-  },
-  section: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: String,
-    required: true,
-  },
+// Test Schema
+const testSchema = new mongoose.Schema({
+  testTitle: { type: String, required: true },
+  totalMarks: { type: String, required: true },
+  department: { type: String, required: true },
+  subject: { type: String, required: true },
+  year: { type: String, required: true },
+  class: { type: String, required: true },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Faculty", required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Test", testSchema);
+
+module.exports = mongoose.model("Test", testSchema);

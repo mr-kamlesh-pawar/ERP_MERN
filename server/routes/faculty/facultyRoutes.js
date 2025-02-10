@@ -21,6 +21,13 @@ const {
   deleteNotice,
   getFacultyNotices,
   DashboardCount,
+  getFeeStructures,
+  uploadFeeStructure,
+  createTest,
+  uploadTestResult,
+  deptSub,
+  getTests,
+  fetchStudentsForTest,
 } = require("../../controllers/faculty/facultyController");
 const router = express.Router();
 const upload = require("../../utils/multerConfig");
@@ -72,8 +79,22 @@ router.put("/notices/:id", updateNotice);
 // Delete a notice by ID
 router.delete("/notices/:id", deleteNotice);
 
-
 router.get("/dashboard/counts", DashboardCount);
+
+// Protected routes
+router.post("/upload-fees", authMiddleware, upload.single("file"), uploadFeeStructure);
+router.get("/get-fees", authMiddleware, getFeeStructures);
+
+
+
+
+// Protected routes
+router.post("/create-test", authMiddleware, createTest);
+router.get("/get-dept-sub",authMiddleware, deptSub);
+router.get("/get-tests",authMiddleware, getTests);
+router.get("/students-for-test/:testId", authMiddleware, fetchStudentsForTest);
+router.post("/upload-test-result", authMiddleware, uploadTestResult);
+
 
 
 

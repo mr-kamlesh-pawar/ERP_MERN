@@ -34,6 +34,11 @@ import TimeTable from "./pages/faculty-view/timeTable";
 import AllStudents from "./pages/faculty-view/allStudents";
 import CreateNotice from "./pages/faculty-view/createNotice";
 import DisplayNotice from "./pages/faculty-view/displayNotice";
+import FacultyEvent from "./pages/faculty-view/facultyEvent";
+import FeeStructure from "./pages/faculty-view/feeStructure";
+import CreateTest from "./pages/faculty-view/CreateTest";
+//import TestResult from "./pages/faculty-view/TestResult";
+import UploadTestMarks from "./pages/faculty-view/TestResult";
 
 
 function App() {
@@ -113,6 +118,11 @@ function App() {
           <Route path="stud-info" element={<AllStudents/>} />
           <Route path="create-notice" element={<CreateNotice/>} />
           <Route path="show-notices" element={<DisplayNotice/>} />
+          <Route path="event" element={<FacultyEvent/>} />
+          <Route path="fees" element={<FeeStructure/>} />
+          <Route path="create-test" element={<CreateTest/>} />
+          <Route path="create-test" element={<CreateTest/>} />
+          <Route path="test-result" element={<UploadTestMarks/>} />
         </Route>
 
         {/* Students Routes */}
