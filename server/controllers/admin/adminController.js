@@ -391,7 +391,6 @@ const deleteAdmin = async (req, res) => {
   }
 };
 
-
 // Create a new department
 const createDepartment = async (req, res) => {
   const { department, departmentCode } = req.body;
@@ -542,7 +541,7 @@ const createFaculty = async (req, res) => {
     }
 
     // Hash the password
-        const hashPassword = await bcrypt.hash(password, 12);
+    const hashPassword = await bcrypt.hash(password, 12);
 
     // Check if the email already exists
     const existingFaculty = await Faculty.findOne({ email });
@@ -554,17 +553,21 @@ const createFaculty = async (req, res) => {
     const newFaculty = new Faculty({
       userName,
       email,
-      password:hashPassword,
+      password: hashPassword,
       department,
     });
 
     // Save the faculty to the database
     await newFaculty.save();
 
-    return res.status(201).json({ message: "Faculty created successfully", faculty: newFaculty });
+    return res
+      .status(201)
+      .json({ message: "Faculty created successfully", faculty: newFaculty });
   } catch (error) {
     console.error("Error in createFaculty:", error);
-    return res.status(500).json({ message: "Failed to create faculty", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to create faculty", error: error.message });
   }
 };
 
@@ -572,21 +575,28 @@ const createFaculty = async (req, res) => {
 const updateFaculty = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userName,  department,} = req.body;
+    const { userName, department } = req.body;
 
     const updatedFaculty = await Faculty.findByIdAndUpdate(
       id,
-      { userName,  department,  },
+      { userName, department },
       { new: true }
     );
 
     if (!updatedFaculty) {
-      return res.status(404).json({ message: 'Faculty not found' });
+      return res.status(404).json({ message: "Faculty not found" });
     }
 
-    return res.status(200).json({ message: 'Faculty updated successfully', faculty: updatedFaculty });
+    return res
+      .status(200)
+      .json({
+        message: "Faculty updated successfully",
+        faculty: updatedFaculty,
+      });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to update faculty', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to update faculty", error: error.message });
   }
 };
 
@@ -598,12 +608,14 @@ const deleteFaculty = async (req, res) => {
     const deletedFaculty = await Faculty.findByIdAndDelete(id);
 
     if (!deletedFaculty) {
-      return res.status(404).json({ message: 'Faculty not found' });
+      return res.status(404).json({ message: "Faculty not found" });
     }
 
-    return res.status(200).json({ message: 'Faculty deleted successfully' });
+    return res.status(200).json({ message: "Faculty deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to delete faculty', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to delete faculty", error: error.message });
   }
 };
 
@@ -614,10 +626,11 @@ const getAllFaculties = async (req, res) => {
 
     return res.status(200).json(faculties);
   } catch (error) {
-    return res.status(500).json({ message: 'Failed to fetch faculties', error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch faculties", error: error.message });
   }
 };
-
 
 // Create a new subject
 const createSubject = async (req, res) => {
@@ -648,18 +661,22 @@ const createSubject = async (req, res) => {
 
     // Find all students in the same department and year
     const students = await Student.find({ department, year });
-      // Add the new subject to each student's subjects array
-      if (students.length > 0) {
-        for (let student of students) {
-          student.subjects.push(newSubject._id);
-          await student.save();
-        }
+    // Add the new subject to each student's subjects array
+    if (students.length > 0) {
+      for (let student of students) {
+        student.subjects.push(newSubject._id);
+        await student.save();
       }
+    }
 
-    return res.status(201).json({ message: "Subject created successfully", subject: newSubject });
+    return res
+      .status(201)
+      .json({ message: "Subject created successfully", subject: newSubject });
   } catch (error) {
     console.error("Error creating subject:", error);
-    return res.status(500).json({ message: "Failed to create subject", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to create subject", error: error.message });
   }
 };
 
@@ -670,7 +687,9 @@ const getAllSubjects = async (req, res) => {
     return res.status(200).json(subjects);
   } catch (error) {
     console.error("Error fetching subjects:", error);
-    return res.status(500).json({ message: "Failed to fetch subjects", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch subjects", error: error.message });
   }
 };
 
@@ -688,12 +707,11 @@ const deleteSubject = async (req, res) => {
     return res.status(200).json({ message: "Subject deleted successfully" });
   } catch (error) {
     console.error("Error deleting subject:", error);
-    return res.status(500).json({ message: "Failed to delete subject", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to delete subject", error: error.message });
   }
 };
-
-
-
 
 //Event Controllers
 
@@ -725,12 +743,14 @@ const createEvent = async (req, res) => {
 const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     if (!id) {
       return res.status(400).json({ message: "Event ID is required" });
     }
 
-    const updatedEvent = await Event.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
 
     if (!updatedEvent) {
       return res.status(404).json({ message: "Event not found" });
@@ -742,7 +762,6 @@ const updateEvent = async (req, res) => {
   }
 };
 
-
 // Delete event
 const deleteEvent = async (req, res) => {
   try {
@@ -753,8 +772,6 @@ const deleteEvent = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
-
 
 // Add a new student
 const addStudent = async (req, res) => {
@@ -775,25 +792,41 @@ const addStudent = async (req, res) => {
       fatherContactNumber,
       class1,
       avatar,
-      
     } = req.body;
 
     // Validate required fields
-    if (!userName || !email || !password || !name || !year || !department || !class1) {
-      return res.status(400).json({ message: "All required fields must be provided." });
+    if (
+      !userName ||
+      !email ||
+      !password ||
+      !name ||
+      !year ||
+      !department ||
+      !class1
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All required fields must be provided." });
     }
 
     // Check if the email or username already exists
-    const existingStudent = await Student.findOne({ $or: [{ email }, { userName }] });
+    const existingStudent = await Student.findOne({
+      $or: [{ email }, { userName }],
+    });
     if (existingStudent) {
-      return res.status(400).json({ message: "Email or username already exists." });
+      return res
+        .status(400)
+        .json({ message: "Email or username already exists." });
     }
+
+    // Hash the password
+    const hashPassword = await bcrypt.hash(password, 12);
 
     // Create a new student
     const newStudent = new Student({
       userName,
       email,
-      password,
+      password: hashPassword,
       name,
       year,
       department,
@@ -805,7 +838,7 @@ const addStudent = async (req, res) => {
       contactNumber,
       fatherContactNumber,
       avatar,
-      class1
+      class1,
     });
 
     // Save the student to the database
@@ -819,13 +852,16 @@ const addStudent = async (req, res) => {
       await newStudent.save(); // Save the updated student with subjects
     }
 
-    return res.status(201).json({ message: "Student added successfully", student: newStudent });
+    return res
+      .status(201)
+      .json({ message: "Student added successfully", student: newStudent });
   } catch (error) {
     console.error("Error adding student:", error);
-    return res.status(500).json({ message: "Failed to add student", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to add student", error: error.message });
   }
 };
-
 
 // Get all students
 const getAllStudents = async (req, res) => {
@@ -834,9 +870,11 @@ const getAllStudents = async (req, res) => {
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error fetching students:", error);
-    return res.status(500).json({ message: "Failed to fetch students", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch students", error: error.message });
   }
-}
+};
 // Search students by department and year
 const searchStudents = async (req, res) => {
   try {
@@ -850,7 +888,9 @@ const searchStudents = async (req, res) => {
     return res.status(200).json(students);
   } catch (error) {
     console.error("Error searching students:", error);
-    return res.status(500).json({ message: "Failed to search students", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to search students", error: error.message });
   }
 };
 
@@ -868,14 +908,11 @@ const deleteStudent = async (req, res) => {
     return res.status(200).json({ message: "Student deleted successfully" });
   } catch (error) {
     console.error("Error deleting student:", error);
-    return res.status(500).json({ message: "Failed to delete student", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to delete student", error: error.message });
   }
 };
-
-
-
-
-
 
 module.exports = {
   getAdminProfile,
@@ -910,6 +947,4 @@ module.exports = {
   getAllStudents,
   searchStudents,
   deleteStudent,
-  
-
-}
+};

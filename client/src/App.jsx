@@ -39,6 +39,13 @@ import FeeStructure from "./pages/faculty-view/feeStructure";
 import CreateTest from "./pages/faculty-view/CreateTest";
 //import TestResult from "./pages/faculty-view/TestResult";
 import UploadTestMarks from "./pages/faculty-view/TestResult";
+import StudentAccount from "./pages/student-view/account";
+import VirtualIDCard from "./components/student-view/VirtualIDCard";
+import FAQComponent from "./pages/student-view/FAQComponent";
+import TimetableComponent from "./pages/student-view/timeTable";
+import AcademicCalender from "./pages/student-view/academicCalender";
+import NoticeComponent from "./pages/student-view/notices";
+import EventsComponent from "./pages/student-view/events";
 
 
 function App() {
@@ -135,6 +142,13 @@ function App() {
           }
         >
           <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="account" element={<StudentAccount />} />
+          <Route path="virtual-id" element={<VirtualIDCard />} />
+          <Route path="faq" element={<FAQComponent />} />
+          <Route path="timetable" element={<TimetableComponent />} />
+          <Route path="academic" element={<AcademicCalender />} />
+          <Route path="notices" element={<NoticeComponent />} />
+          <Route path="events" element={<EventsComponent />} />
          
         </Route>
     

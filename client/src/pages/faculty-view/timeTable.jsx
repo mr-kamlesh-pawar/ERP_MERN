@@ -100,9 +100,9 @@ const TimeTable = () => {
                 required
               >
                 <option value="">Select Year</option>
-                <option value="1st-year">1st Year</option>
-                <option value="2nd-year">2nd Year</option>
-                <option value="3rd-year">3rd Year</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
               </select>
 
               <select

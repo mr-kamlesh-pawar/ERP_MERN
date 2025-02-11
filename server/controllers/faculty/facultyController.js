@@ -11,9 +11,8 @@ const cloudinary = require("../../utils/cloudinary.js");
 const Timetable = require("../../models/Timetable.js");
 const Notice = require("../../models/Notice.js");
 const FeeStructure = require("../../models/FeeStructure.js");
-const  Test  = require("../../models/Test.js");
-const TestResult= require("../../models/Marks.js");
-
+const Test = require("../../models/Test.js");
+const TestResult = require("../../models/Marks.js");
 
 // export const updatedPassword = async (req, res) => {
 //   try {
@@ -555,19 +554,19 @@ const getStudents = async (req, res) => {
     // Get faculty's department from req.user
     const faculty = await Faculty.findById(req.user.id);
     if (!faculty) {
-      return res.status(404).json({ message: 'Faculty not found' });
+      return res.status(404).json({ message: "Faculty not found" });
     }
 
     // Fetch students based on department & selected class
     const students = await Student.find({
       department: faculty.department,
       class1: selectedClass,
-    }).select('rollNo name email');
+    }).select("rollNo name email");
 
     res.status(200).json({ students });
   } catch (error) {
-    console.error('Error fetching students:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -598,7 +597,9 @@ const uploadTimetable = async (req, res) => {
     });
 
     await newFile.save();
-    res.status(201).json({ message: "File uploaded successfully!", file: newFile });
+    res
+      .status(201)
+      .json({ message: "File uploaded successfully!", file: newFile });
   } catch (error) {
     console.error("Error uploading file:", error);
     res.status(500).json({ message: "Error uploading file", error });
@@ -637,7 +638,7 @@ const createNotice = async (req, res) => {
 // Get all notices
 const getAllNotices = async (req, res) => {
   try {
-    const notices = await Notice.find({from:"faculty"});
+    const notices = await Notice.find({ from: "faculty" });
     res.status(200).json({ success: true, notices });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error fetching notices" });
@@ -665,12 +666,13 @@ const deleteNotice = async (req, res) => {
   try {
     const { id } = req.params;
     await Notice.findByIdAndDelete(id);
-    res.status(200).json({ success: true, message: "Notice deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Notice deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error deleting notice" });
   }
 };
-
 
 // Get all getFacultyNotices
 const getFacultyNotices = async (req, res) => {
@@ -685,10 +687,8 @@ const getFacultyNotices = async (req, res) => {
   }
 };
 
-
-
 // Get counts for students, faculties, and departments
-const DashboardCount= async (req, res) => {
+const DashboardCount = async (req, res) => {
   try {
     const totalStudents = await Student.countDocuments();
     const totalFaculties = await Faculty.countDocuments();
@@ -708,8 +708,7 @@ const DashboardCount= async (req, res) => {
     console.error("Error fetching counts:", error);
     res.status(500).json({ success: false, message: "Error fetching data" });
   }
-}
-
+};
 
 // Upload fee structure
 const uploadFeeStructure = async (req, res) => {
@@ -752,15 +751,14 @@ const getFeeStructures = async (req, res) => {
       return res.status(404).json({ message: "Faculty not found" });
     }
 
-    const feeStructures = await FeeStructure.find({ department: faculty.department });
+    const feeStructures = await FeeStructure.find({
+      department: faculty.department,
+    });
     res.json(feeStructures);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
 
 // Fetch departments and subjects
 const deptSub = async (req, res) => {
@@ -804,16 +802,15 @@ const createTest = async (req, res) => {
   }
 };
 
-
 // Fetch all tests
-const getTests= async (req, res) => {
+const getTests = async (req, res) => {
   try {
     const tests = await Test.find({ createdBy: req.user.id });
     res.status(200).json(tests);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Fetch students for a test
 const fetchStudentsForTest = async (req, res) => {
@@ -848,8 +845,6 @@ const uploadTestResult = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   getAllDepartments,
   markAttendance,
@@ -878,11 +873,4 @@ module.exports = {
   deptSub,
   getTests,
   fetchStudentsForTest,
-
-
-
-
-
-
-
 };

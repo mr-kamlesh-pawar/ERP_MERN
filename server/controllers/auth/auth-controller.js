@@ -102,7 +102,7 @@ const loginUser = async (req, res) => {
         email: user.email,
       },
       "JWT_SECRET_KEY", // Replace with a secure secret key
-      { expiresIn: "1h" }
+      { expiresIn: "5h" }
     );
 
     // Set the token in a cookie and send the response

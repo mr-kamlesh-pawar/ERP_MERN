@@ -33,8 +33,11 @@ const AuthLogin = () => {
           else{
             toast({
               title: data.payload?.message || 'Login Failed!, Please try again...',
-              variant: 'disruptive'
+              variant: 'destructive'
           })
+
+
+         
 
 
           }

@@ -107,3 +107,20 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 29s linear infinite;
+}
