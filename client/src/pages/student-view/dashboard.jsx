@@ -6,12 +6,12 @@ const StudentDashboard = () => {
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/rbmzkvrscdwvih5rrady.png', title: 'Attendance', link: 'attendance' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wmonr8lnbnncle2rnuer.png', title: 'Assignment' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/kxypri3joxsvcy0946lc.png', title: 'Timetable', link:'timetable'},
-    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/tocnfhkmlepd8analtat.png', title: 'Results' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/tocnfhkmlepd8analtat.png', title: 'Results', link:'test-result' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/ngfkgriyzygohbrqrfgp.png', title: 'Academic Calendar', link:'academic' },
-    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/n3xpda3v9aejsdvurxnj.png', title: 'Fees' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/n3xpda3v9aejsdvurxnj.png', title: 'Fees', link:'fees' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/uf3y3vb7bpssgyi0vlzd.png', title: 'Notification', link:'notices' },
     { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/cobmzeablwihe5xbql9r.png', title: 'Upcoming Event', link:'events' },
-    { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wd4ozsnkgxqbhi6dru9r.png', title: 'College Policy' },
+    { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wd4ozsnkgxqbhi6dru9r.png', title: 'College Policy', link:'policy' },
   ];
 
   return (

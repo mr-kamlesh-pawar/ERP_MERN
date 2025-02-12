@@ -2,6 +2,9 @@ const Event = require("../../models/Event");
 const Notice = require("../../models/Notice");
 const Student = require("../../models/Student");
 const Timetable = require("../../models/Timetable");
+const TestResult = require("../../models/Marks");
+const Test = require("../../models/Test");
+const FeeStructure = require("../../models/FeeStructure");
 
 // Get Student Profile
 const getStudentProfile = async (req, res) => {
@@ -156,7 +159,76 @@ const getEvents = async (req, res) => {
 
 
 
+// Fetch all tests assigned to a student (filtered by department, class, and year)
+const getStudentTests = async (req, res) => {
+  try {
+    const { id: studentId } = req.user; // Assuming student ID is available in req.user
 
+    // Fetch student details
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    // Fetch all tests matching the student's department, class, and year
+    const tests = await Test.find({
+      department: student.department,
+      class: student.class1,
+      year: student.year,
+    });
+
+    // Fetch test results for the student
+    const testResults = await TestResult.find({ studentId });
+
+    // Map tests to include marks if available
+    const results = tests.map((test) => {
+      const result = testResults.find((tr) => tr.testId.toString() === test._id.toString());
+      return {
+        testId: test._id,
+        testTitle: test.testTitle,
+        totalMarks: test.totalMarks,
+        subject: test.subject,
+        year: test.year,
+        class: test.class,
+        department: test.department,
+        marksObtained: result ? result.marksObtained : null,
+        resultDeclared: !!result, // Flag to check if result is declared
+      };
+    });
+
+    res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+// Fetch fee structure for a student based on department and year
+const getFeeStructure = async (req, res) => {
+  try {
+    const { id: studentId } = req.user; // Assuming student ID is available in req.user
+
+    // Fetch student details
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    // Fetch fee structure based on student's department and year
+    const feeStructure = await FeeStructure.findOne({
+      department: student.department,
+      year: student.year,
+    });
+
+    if (!feeStructure) {
+      return res.status(404).json({ success: false, message: "Fee structure not found" });
+    }
+
+    res.status(200).json({ success: true, data: feeStructure });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 
 
@@ -171,6 +243,8 @@ module.exports={
     getTimetableForStudent,
     getAcademicsCalender,
     getNoticesForStudents,
-    getEvents
+    getEvents,
+    getStudentTests,
+    getFeeStructure
 
 }

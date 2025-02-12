@@ -23,7 +23,7 @@ const WhiteHeader = () => {
     }, []);
 
   return (
-    <div className="header white-header flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-300 shadow-md">
+    <div className="header white-header flex flex-col sm:flex-row items-center justify-between p-4  shadow-md bg-white border border-t-gray-300">
       {/* Left Section: User Info */}
       <div className="user-info-left flex items-center space-x-4">
 

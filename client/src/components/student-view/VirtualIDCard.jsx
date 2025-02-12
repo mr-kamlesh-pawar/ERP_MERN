@@ -48,11 +48,11 @@ useEffect(()=>{
   if (error) return <div className="text-center mt-8 text-red-500">Error: {error}</div>;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-[#d7e8c]" >
       {/* ID Card Container */}
       <div className="bg-white rounded-lg shadow-2xl overflow-hidden w-96 transform transition-all hover:scale-105">
         {/* Header Section */}
-        <div className="bg-blue-600 p-6">
+        <div className="bg-blue-900 p-6">
           <h1 className="text-2xl font-bold text-white text-center">Student ID Card</h1>
         </div>
 
@@ -60,7 +60,7 @@ useEffect(()=>{
         <div className="p-6">
           <div className="flex justify-center mb-4">
             <img
-              src={student.avatar || "https://via.placeholder.com/150"} // Use avatar from API or fallback
+              src={student.avatar || "https://cdn-icons-png.flaticon.com/512/201/201818.png"} // Use avatar from API or fallback
               alt="Student"
               className="w-32 h-32 rounded-full border-4 border-blue-500"
             />
@@ -89,7 +89,7 @@ useEffect(()=>{
         </div>
 
         {/* Footer Section */}
-        <div className="bg-blue-600 p-4 text-center">
+        <div className="bg-blue-900 p-4 text-center">
           <p className="text-white text-sm">Scan the QR code for more details</p>
         </div>
       </div>

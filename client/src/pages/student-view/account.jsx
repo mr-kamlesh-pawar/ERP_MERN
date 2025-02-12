@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { User, School, Phone, MapPin, Calendar } from "lucide-react";
 
-
 const StudentAccount = () => {
   const [formData, setFormData] = useState({
     userName: "",

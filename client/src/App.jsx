@@ -46,6 +46,9 @@ import TimetableComponent from "./pages/student-view/timeTable";
 import AcademicCalender from "./pages/student-view/academicCalender";
 import NoticeComponent from "./pages/student-view/notices";
 import EventsComponent from "./pages/student-view/events";
+import StudentTestResults from "./pages/student-view/StudentTestResults";
+import FeeStructureStudent from "./pages/student-view/fees";
+import CollegePolicyPage from "./pages/student-view/CollegePolicyPage";
 
 
 function App() {
@@ -149,6 +152,9 @@ function App() {
           <Route path="academic" element={<AcademicCalender />} />
           <Route path="notices" element={<NoticeComponent />} />
           <Route path="events" element={<EventsComponent />} />
+          <Route path="test-result" element={<StudentTestResults />} />
+          <Route path="fees" element={<FeeStructureStudent />} />
+          <Route path="policy" element={<CollegePolicyPage />} />
          
         </Route>
     
