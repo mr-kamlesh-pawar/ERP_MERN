@@ -13,7 +13,7 @@ const StudentAccount = () => {
     year: "",
     class1: "",
     department: "",
-    section: "",
+    semester: "",
     batch: "",
     contactNumber: "",
     fatherName: "",
@@ -151,7 +151,7 @@ const StudentAccount = () => {
 
             <TabsContent value="educational">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["year", "class1", "department", "section", "batch"].map(
+                {["year", "class1", "department", "semester", "batch"].map(
                   (field) => (
                     <div key={field} className="flex flex-col gap-1">
                       <label

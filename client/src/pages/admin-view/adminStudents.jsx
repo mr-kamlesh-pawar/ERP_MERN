@@ -33,6 +33,7 @@ const AdminStudents = () => {
     contactNumber: "",
     fatherContactNumber: "",
     avatar: "",
+    semester:""
   });
 
   // Fetch departments and all students on initial load
@@ -95,7 +96,8 @@ const AdminStudents = () => {
         contactNumber: "",
         fatherContactNumber: "",
         avatar: "",
-        class1:""
+        class1:"",
+        semester:""
       }); // Reset form
     } catch (error) {
       console.error("Error adding student:", error);
@@ -193,6 +195,33 @@ const AdminStudents = () => {
                   </SelectItem>
                   <SelectItem key="3" value="3">
                     class 03
+                  </SelectItem>
+                
+              </SelectContent>
+            </Select>
+                <Select onValueChange={(value) => setNewStudent({ ...newStudent, semester: value })}>
+              <SelectTrigger>
+                <span>{newStudent.semester || "Select Semester"}</span>
+              </SelectTrigger>
+              <SelectContent>
+               
+                  <SelectItem key="1" value="1st Semester">
+                  1st Semester
+                  </SelectItem>
+                  <SelectItem key="2" value="2nd Semester">
+                  2nd Semester
+                  </SelectItem>
+                  <SelectItem key="3" value="3rd Semester">
+                  3rd Semester
+                  </SelectItem>
+                  <SelectItem key="4" value="4th Semester">
+                  4th Semester
+                  </SelectItem>
+                  <SelectItem key="5" value="5th Semester">
+                  5th Semester
+                  </SelectItem>
+                  <SelectItem key="6" value="6th Semester">
+                  6th Semester
                   </SelectItem>
                 
               </SelectContent>

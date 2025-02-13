@@ -54,6 +54,8 @@ import Faculties from "./pages/student-view/showFaculties";
 import FacultyIDCard from "./components/faculty-view/VirtualIDCard";
 import OldDashboard from "./pages/faculty-view/oldDashboard";
 import AnimatedCursor from "./components/common/AnimatedCursor";
+import FacultyClassroom from "./pages/faculty-view/classroom";
+import StudentClassroom from "./pages/student-view/studentClassroom";
 
 
 function App() {
@@ -144,6 +146,7 @@ function App() {
           <Route path="placements" element={<Placements />} />
           <Route path="policy" element={<CollegePolicyPage />} />
           <Route path="faq" element={<FAQComponent />} />
+          <Route path="classroom" element={<FacultyClassroom />} />
          
         </Route>
 
@@ -169,6 +172,7 @@ function App() {
           <Route path="policy" element={<CollegePolicyPage />} />
           <Route path="placements" element={<Placements />} />
           <Route path="faculties" element={<Faculties />} />
+          <Route path="classroom" element={<StudentClassroom />} />
          
         </Route>
     

@@ -13,6 +13,7 @@ const Notice = require("../../models/Notice.js");
 const FeeStructure = require("../../models/FeeStructure.js");
 const Test = require("../../models/Test.js");
 const TestResult = require("../../models/Marks.js");
+const Classroom  = require("../../models/Classroom.js");
 
 // export const updatedPassword = async (req, res) => {
 //   try {
@@ -834,16 +835,194 @@ const fetchStudentsForTest = async (req, res) => {
 };
 
 // Upload test results
-const uploadTestResult = async (req, res) => {
-  try {
-    const results = req.body;
+// const uploadTestResult = async (req, res) => {
+//   try {
+//     const results = req.body;
 
-    const savedResults = await TestResult.insertMany(results);
-    res.status(201).json(savedResults);
+//     const savedResults = await TestResult.insertMany(results);
+//     res.status(201).json(savedResults);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+const uploadTestResult = async (req, res) => {
+  const marksData = req.body; // Array of test results
+
+  try {
+    // Use bulkWrite to upsert test results
+    const bulkOps = marksData.map((result) => ({
+      updateOne: {
+        filter: { testId: result.testId, studentId: result.studentId },
+        update: { $set: result },
+        upsert: true, // Insert if not found, update if found
+      },
+    }));
+
+    await TestResult.bulkWrite(bulkOps);
+
+    res.status(200).json({ message: "Test results uploaded/updated successfully!" });
+  } catch (error) {
+    console.error("Error uploading/updating test results:", error);
+    res.status(500).json({ message: "Failed to upload/update test results" });
+  }
+};
+
+
+// Fetch students with their marks for a specific test
+const getStudentsForTest = async (req, res) => {
+  const { testId } = req.params;
+
+  try {
+    // Fetch all students
+    const students = await Student.find({});
+
+    // Fetch test results for the selected test
+    const testResults = await TestResult.find({ testId });
+
+    // Map students with their marks (if available)
+    const studentsWithMarks = students.map((student) => {
+      const result = testResults.find((result) => result.studentId.equals(student._id));
+      return {
+        _id: student._id,
+        name: student.name,
+        marksObtained: result ? result.marksObtained : null,
+      };
+    });
+
+    res.status(200).json(studentsWithMarks);
+  } catch (error) {
+    console.error("Error fetching students with marks:", error);
+    res.status(500).json({ message: "Failed to fetch students with marks" });
+  }
+};
+
+
+
+
+
+
+
+
+//classroom
+const createClassroom = async (req, res) => {
+  try {
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: 'Faculty not found' });
+    }
+
+    const { semester, subject, class: classNumber, googleClassCode, inviteLink, description } = req.body;
+
+    // Validate required fields
+    if (!semester || !subject || !classNumber || !googleClassCode || !inviteLink || !description) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if a classroom with the same semester, class, subject, and department already exists
+    const existingClassroom = await Classroom.findOne({
+      semester,
+      subject,
+      department: faculty.department, // Ensure the classroom belongs to the same department
+      class: classNumber,
+      faculty: req.user.id, // Ensure the classroom belongs to the same faculty
+    });
+
+    if (existingClassroom) {
+      return res.status(409).json({ message: 'Classroom already exists for this semester, class, and subject' });
+    }
+
+    // Create the new classroom
+    const classroom = await Classroom.create({
+      faculty: req.user.id,
+      department: faculty.department,
+      semester,
+      subject,
+      class: classNumber,
+      googleClassCode,
+      inviteLink,
+      description,
+    });
+
+    res.status(201).json(classroom);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+const updateClassroom = async (req, res) => {
+  try {
+    const classroom = await Classroom.findOneAndUpdate(
+      { _id: req.params.id, faculty: req.user.id },
+      req.body,
+      { new: true }
+    );
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteClassroom = async (req, res) => {
+  try {
+    const classroom = await Classroom.findOneAndDelete({
+      _id: req.params.id,
+      faculty: req.user.id
+    });
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+    res.json({ message: 'Classroom deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getClassrooms = async (req, res) => {
+  try {
+    const user = await Faculty.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Faculty not found' });
+    }
+
+    const query = {
+      department: user.department,
+      faculty: user._id
+    };
+
+    const classrooms = await Classroom.find(query);
+    res.json(classrooms);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Fetch subjects for faculty
+const getSubs= async (req, res) => {
+  try {
+    const faculty = await Faculty.findById(req.user.id);
+    if (!faculty) {
+      return res.status(404).json({ message: 'Faculty not found' });
+    }
+
+    const subjects = await Subject.find({
+      department: faculty.department,
+    });
+
+    res.json(subjects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+
+
+
+
 
 module.exports = {
   getAllDepartments,
@@ -873,4 +1052,13 @@ module.exports = {
   deptSub,
   getTests,
   fetchStudentsForTest,
+  getStudentsForTest,
+  getClassrooms,
+  deleteClassroom,
+  updateClassroom,
+  createClassroom,
+  getSubs
+
+
+
 };

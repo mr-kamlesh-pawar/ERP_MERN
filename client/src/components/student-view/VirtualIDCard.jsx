@@ -72,8 +72,9 @@ useEffect(()=>{
             <p className="text-gray-600">Department: {student.department}</p>
             <p className="text-gray-600">Batch: {student.batch}</p>
             <p className="text-gray-600">Year: {student.year}</p>
+            <p className="text-gray-600">Semester: {student.semester}</p>
             <p className="text-gray-600">Father's Name: {student.fatherName}</p>
-            <p className="text-gray-600">Contact: {student.contactNumber}</p>
+            <p className="text-gray-600">Contact: +91 {student.contactNumber}</p>
           </div>
         </div>
 

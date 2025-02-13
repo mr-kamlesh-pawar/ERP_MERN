@@ -162,6 +162,7 @@ button:focus-visible {
   scrollbar-color: #9988b5 #f1f1f1; /* Thumb and track color */
 }
 
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -185,5 +186,20 @@ button:focus-visible {
   100% {
     transform: scale(0.8);
     opacity: 0;
+  }
+}
+
+@keyframes glow {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
   }
 }

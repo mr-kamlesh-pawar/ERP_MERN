@@ -14,7 +14,7 @@ const studentSchema = new mongoose.Schema({
   fatherName: { type: String },
   motherName: { type: String },
   department: { type: String, required: true },
-  section: { type: String,  },
+  semester: { type: String,  },
   batch: { type: String },
   contactNumber: { type: Number },
   fatherContactNumber: { type: Number },

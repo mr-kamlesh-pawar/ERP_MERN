@@ -28,6 +28,12 @@ const {
   deptSub,
   getTests,
   fetchStudentsForTest,
+  getStudentsForTest,
+  createClassroom,
+  updateClassroom,
+  deleteClassroom,
+  getClassrooms,
+  getSubs,
 } = require("../../controllers/faculty/facultyController");
 const router = express.Router();
 const upload = require("../../utils/multerConfig");
@@ -51,7 +57,7 @@ router.post(
 
 router.get("/notes", authMiddleware, getAllNotes);
 router.get("/get-all-subjects", getAllSubjects);
-router.post("/get-students",authMiddleware, getStudents);
+router.post("/get-students", authMiddleware, getStudents);
 
 // Upload Timetable Route
 router.post(
@@ -63,8 +69,6 @@ router.post(
 
 // Get Timetable Route
 router.get("/get-timetable", authMiddleware, getTimetable);
-
-
 
 // Create a new notice
 router.post("/notices", createNotice);
@@ -82,20 +86,36 @@ router.delete("/notices/:id", deleteNotice);
 router.get("/dashboard/counts", DashboardCount);
 
 // Protected routes
-router.post("/upload-fees", authMiddleware, upload.single("file"), uploadFeeStructure);
+router.post(
+  "/upload-fees",
+  authMiddleware,
+  upload.single("file"),
+  uploadFeeStructure
+);
 router.get("/get-fees", authMiddleware, getFeeStructures);
-
-
-
 
 // Protected routes
 router.post("/create-test", authMiddleware, createTest);
-router.get("/get-dept-sub",authMiddleware, deptSub);
-router.get("/get-tests",authMiddleware, getTests);
-router.get("/students-for-test/:testId", authMiddleware, fetchStudentsForTest);
+router.get("/get-dept-sub", authMiddleware, deptSub);
+router.get("/get-tests", authMiddleware, getTests);
+//router.get("/students-for-test/:testId", authMiddleware, fetchStudentsForTest);
 router.post("/upload-test-result", authMiddleware, uploadTestResult);
 
+// Route to fetch students with marks for a specific test
+router.get("/students-for-test/:testId", getStudentsForTest);
 
+
+
+
+
+
+router.post('/create-classroom', authMiddleware, createClassroom);
+router.put('/update-classroom/:id', authMiddleware, updateClassroom);
+router.delete('/delete-classroom/:id', authMiddleware, deleteClassroom);
+router.get('/get-classroom', authMiddleware, getClassrooms);
+
+
+router.get('/get-subs', authMiddleware, getSubs);
 
 
 

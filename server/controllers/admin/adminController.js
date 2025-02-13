@@ -635,10 +635,10 @@ const getAllFaculties = async (req, res) => {
 // Create a new subject
 const createSubject = async (req, res) => {
   try {
-    const { subjectName, subjectCode, department, year } = req.body;
+    const { subjectName, subjectCode, department, year, semester } = req.body;
 
     // Validate required fields
-    if (!subjectName || !subjectCode || !department || !year) {
+    if (!subjectName || !subjectCode || !department || !year || !semester) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -654,13 +654,14 @@ const createSubject = async (req, res) => {
       subjectCode,
       department,
       year,
+      semester
     });
 
     // Save the subject to the database
     await newSubject.save();
 
     // Find all students in the same department and year
-    const students = await Student.find({ department, year });
+    const students = await Student.find({ department, year,semester });
     // Add the new subject to each student's subjects array
     if (students.length > 0) {
       for (let student of students) {
@@ -792,6 +793,7 @@ const addStudent = async (req, res) => {
       fatherContactNumber,
       class1,
       avatar,
+      semester
     } = req.body;
 
     // Validate required fields
@@ -802,7 +804,7 @@ const addStudent = async (req, res) => {
       !name ||
       !year ||
       !department ||
-      !class1
+      !class1 || !semester
     ) {
       return res
         .status(400)
@@ -839,13 +841,14 @@ const addStudent = async (req, res) => {
       fatherContactNumber,
       avatar,
       class1,
+      semester
     });
 
     // Save the student to the database
     await newStudent.save();
 
     // Find subjects based on department and year
-    const subjects = await Subject.find({ department, year });
+    const subjects = await Subject.find({ department, year,semester });
     if (subjects.length > 0) {
       // Add subject IDs to the student's subjects array
       newStudent.subjects = subjects.map((subject) => subject._id);

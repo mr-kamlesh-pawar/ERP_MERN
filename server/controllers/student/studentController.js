@@ -6,6 +6,7 @@ const TestResult = require("../../models/Marks");
 const Test = require("../../models/Test");
 const FeeStructure = require("../../models/FeeStructure");
 const Faculty = require("../../models/Faculty");
+const Classroom = require("../../models/Classroom");
 
 // Get Student Profile
 const getStudentProfile = async (req, res) => {
@@ -42,13 +43,16 @@ const updateStudentProfile = async (req, res) => {
 // Fetch the most recent notice
 const getRecentNotice = async (req, res) => {
   try {
-      const notice = await Notice.findOne().sort({ date: -1 });
-      if (!notice) {
-          return res.status(404).json({ message: "No notices found" });
-      }
-      res.json(notice);
+    // Find the most recent notice where `to` is either 'students' or 'all'
+    const notice = await Notice.findOne({ to: { $in: ['students', 'all','faculties'] } }).sort({ date: -1 });
+
+    if (!notice) {
+      return res.status(404).json({ message: "No notices found" });
+    }
+
+    res.json(notice);
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -258,6 +262,54 @@ const getFacultiesByStudentDepartment = async (req, res) => {
 };
 
 
+
+// Get all subjects for a student based on department and semester
+const getStudentSubjects = async (req, res) => {
+  try {
+    const student = await Student.findById(req.user.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const classrooms = await Classroom.find({
+      department: student.department,
+      semester: student.semester,
+    });
+
+    // Extract unique subjects
+    const subjects = [...new Set(classrooms.map((cls) => cls.subject))];
+
+    res.status(200).json(subjects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get classroom details for a specific subject
+const getClassroomBySubject = async (req, res) => {
+  try {
+    const student = await Student.findById(req.user.id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const classroom = await Classroom.findOne({
+      department: student.department,
+      semester: student.semester,
+      subject: req.params.subject,
+    });
+
+    if (!classroom) {
+      return res.status(404).json({ message: 'Classroom not found' });
+    }
+
+    res.status(200).json(classroom);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports={
     getStudentProfile,
     updateStudentProfile,
@@ -269,6 +321,8 @@ module.exports={
     getEvents,
     getStudentTests,
     getFeeStructure,
-    getFacultiesByStudentDepartment
+    getFacultiesByStudentDepartment,
+    getStudentSubjects,
+    getClassroomBySubject
 
 }

@@ -33,7 +33,7 @@ const AnimatedCursor = () => {
         x: prev.x + (position.x - prev.x) * 0.1,
         y: prev.y + (position.y - prev.y) * 0.1,
       }));
-    }, 20);
+    }, 16); // 60 FPS (1000ms / 60 ≈ 16ms)
 
     return () => clearInterval(interval);
   }, [position]);
@@ -42,9 +42,11 @@ const AnimatedCursor = () => {
     <>
       {/* Main Cursor */}
       <div
-        className="fixed w-8 h-8 rounded-full pointer-events-none z-50 transition-transform duration-100 ease-out"
+        className="fixed w-8 h-8 rounded-full pointer-events-none z-50 transition-all duration-100 ease-out"
         style={{
-          transform: `translate3d(${position.x - 16}px, ${position.y - 16}px, 0) scale(${isHovering ? 1.8 : 1})`,
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHovering ? 1.8 : 1})`,
           background: isHovering
             ? "radial-gradient(circle, rgba(255, 105, 180, 0.8), transparent)"
             : "radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent)",
@@ -58,16 +60,33 @@ const AnimatedCursor = () => {
 
       {/* Trailing Cursor */}
       <div
-        className="fixed w-10 h-10 rounded-full pointer-events-none z-40 transition-transform duration-300 ease-out"
+        className="fixed w-10 h-10 rounded-full pointer-events-none z-40 transition-all duration-300 ease-out"
         style={{
-          transform: `translate3d(${trailPosition.x - 20}px, ${trailPosition.y - 20}px, 0) scale(${isHovering ? 1.4 : 1})`,
+          left: `${trailPosition.x}px`,
+          top: `${trailPosition.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHovering ? 1.4 : 1})`,
           background: isHovering
             ? "radial-gradient(circle, rgba(255, 105, 180, 0.5), transparent)"
             : "radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent)",
           border: isHovering ? "2px solid rgba(255, 105, 180, 0.5)" : "2px solid rgba(255, 255, 255, 0.5)",
           boxShadow: "0 0 20px rgba(255, 255, 255, 0.3)",
           opacity: 0.5,
-          animation: isHovering ? "trail 0.8s infinite alternate" : "none",
+          animation: isHovering ? "trail 0.4s infinite alternate" : "none",
+        }}
+      ></div>
+
+      {/* Additional Glow Effect */}
+      <div
+        className="fixed w-16 h-16 rounded-full pointer-events-none z-30 transition-all duration-500 ease-out"
+        style={{
+          left: `${trailPosition.x}px`,
+          top: `${trailPosition.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHovering ? 1.2 : 0.8})`,
+          background: isHovering
+            ? "radial-gradient(circle, rgba(255, 105, 180, 0.2), transparent)"
+            : "radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent)",
+          opacity: 0.3,
+          animation: isHovering ? "glow 1s infinite alternate" : "none",
         }}
       ></div>
     </>

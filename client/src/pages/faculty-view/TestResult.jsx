@@ -58,8 +58,18 @@ const UploadTestMarks = () => {
       const response = await axios.get(`http://localhost:5000/api/faculty/students-for-test/${testId}`, {
         withCredentials: true,
       });
+
+      // Set students and their marks
       setStudents(response.data);
-      setMarks({}); // Reset marks input
+
+      // Initialize marks state with fetched marks
+      const initialMarks = {};
+      response.data.forEach((student) => {
+        if (student.marksObtained !== null) {
+          initialMarks[student._id] = student.marksObtained;
+        }
+      });
+      setMarks(initialMarks);
     } catch (error) {
       toast({
         title: "Error",
@@ -92,8 +102,6 @@ const UploadTestMarks = () => {
         totalMarks,
       }));
 
-        console.log("MArks Data:",marksData );
-        
       await axios.post("http://localhost:5000/api/faculty/upload-test-result", marksData, {
         withCredentials: true,
       });
