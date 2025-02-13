@@ -51,6 +51,8 @@ import FeeStructureStudent from "./pages/student-view/fees";
 import CollegePolicyPage from "./pages/student-view/CollegePolicyPage";
 import Placements from "./pages/student-view/placement";
 import Faculties from "./pages/student-view/showFaculties";
+import FacultyIDCard from "./components/faculty-view/VirtualIDCard";
+import OldDashboard from "./pages/faculty-view/oldDashboard";
 
 
 function App() {
@@ -124,7 +126,7 @@ function App() {
           <Route path="dashboard" element={<FacultyDashboard />} />
           <Route path="attendance" element={<MarkAttendance />} />
           <Route path="upload-notes" element={<UploadNotes/>} />
-          <Route path="profile" element={<FacultyProfile/>} />
+          <Route path="account" element={<FacultyProfile/>} />
           <Route path="notes-list" element={<NotesList/>} />
           <Route path="timetable" element={<TimeTable/>} />
           <Route path="stud-info" element={<AllStudents/>} />
@@ -135,6 +137,11 @@ function App() {
           <Route path="create-test" element={<CreateTest/>} />
           <Route path="create-test" element={<CreateTest/>} />
           <Route path="test-result" element={<UploadTestMarks/>} />
+          <Route path="virtual-id" element={<FacultyIDCard/>} />
+          <Route path="dashboard-data" element={<OldDashboard/>} />
+          <Route path="placements" element={<Placements />} />
+          <Route path="policy" element={<CollegePolicyPage />} />
+         
         </Route>
 
         {/* Students Routes */}

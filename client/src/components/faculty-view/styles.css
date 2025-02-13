@@ -1,0 +1,694 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('https://res.cloudinary.com/dftldrxjh/image/upload/v1739281924/Images/iqzbzresd8zrw6f1dftn.jpg'); /* Ensure this path is correct */
+    backdrop-filter: blur(5px); /* Optional: adds a blur effect */
+    background-size: cover;
+    box-sizing: border-box;
+    background-position: center;
+    height: 100vh;
+}
+
+/* Dashboard container */
+/* .dashboard-container {
+    width: 90%;
+    margin: 90px auto 20px auto;  
+    
+    background-image: url('https://res.cloudinary.com/dftldrxjh/image/upload/v1739281924/Images/iqzbzresd8zrw6f1dftn.jpg'); 
+    backdrop-filter: blur(5px); 
+    background-size: cover;
+    text-align: center;
+} */
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 50px rgba(0, 0, 0, 0.837);
+    flex-wrap: wrap; /* Allow wrapping */
+}
+
+.header .title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.header .user-status {
+    display: flex;
+    align-items: center;
+}
+
+.header .user-status img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header .user-status .status {
+    color: #28a745;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+/* Header buttons container */
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Ensure space between buttons */
+}
+
+/* Home button styles */
+.home-button {
+    width: 45px;
+    height: 45px;
+    background-color: rgb(3, 3, 3);
+    border-radius: 7px; /* Ensure same border radius */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white; /* Set color to white */
+}
+
+.home-button svg {
+    height: 1.5em;
+    fill: rgb(251, 250, 250);
+}
+
+.home-button:hover svg {
+    animation: jello-vertical 0.7s both;
+}
+
+/* FAQ button styles */
+/* From Uiverse.io by vinodjangid07 */
+.faq-button {
+    width: 45px;
+    height: 45px;
+    background-color: rgb(3, 3, 3);
+    border-radius: 7px; /* Ensure same border radius */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white; /* Set color to white */
+}
+
+.faq-button svg {
+    height: 1.5em;
+    fill: rgb(251, 250, 250);
+}
+
+.faq-button:hover svg {
+    animation: jello-vertical 0.7s both;
+}
+
+@keyframes jello-vertical {
+    0% {
+        transform: scale3d(1, 1, 1);
+    }
+    30% {
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    40% {
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    50% {
+        transform: scale3d(0.85, 1.15, 1);
+    }
+    65% {
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    75% {
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    100% {
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.tooltip {
+    position: absolute;
+    top: -20px;
+    opacity: 0;
+    background-color: #ffe53b;
+    background-image: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.2s;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+/* Notification button styles */
+/* From Uiverse.io by asgardOP */
+.loader {
+    width: fit-content;
+    height: fit-content;
+    background-color: rgb(3, 3, 3);
+    border-radius: 7px; /* Ensure same border radius */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    color: white; /* Set color to white */
+}
+
+.loader:hover {
+    background-color: rgb(26, 26, 26);
+}
+
+.loader:hover svg {
+    color: white;
+}
+
+.loader svg {
+    color: rgba(255, 255, 255, 0.651);
+    transform: scale(1.2);
+    transition: 0.2s;
+}
+
+.point {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 6px;
+    height: 6px;
+    background-color: rgb(0, 255, 0);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.point::before {
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background-color: rgb(0, 255, 0);
+    border-radius: 25px;
+    animation: loop 1s 0s infinite;
+}
+
+@keyframes loop {
+    0% {
+        background-color: rgb(0, 255, 0);
+        width: 1px;
+        height: 1px;
+    }
+    100% {
+        background-color: rgba(0, 255, 0, 0);
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Logout button styles */
+/* From Uiverse.io by kennyotsu-monochromia */
+.Btn {
+    --black: #000000;
+    --ch-black: #141414;
+    --eer-black: #1b1b1b;
+    --night-rider: #2e2e2e;
+    --white: #ffffff;
+    --af-white: #f3f3f3;
+    --ch-white: #e1e1e1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 7px; /* Ensure same border radius */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: .3s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+    background-color: var(--night-rider);
+}
+
+.sign {
+    width: 100%;
+    transition-duration: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sign svg {
+    width: 17px;
+}
+
+.sign svg path {
+    fill: var(--af-white);
+}
+
+.text {
+    position: absolute;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: var(--af-white);
+    font-size: 1.2em;
+    font-weight: 600;
+    transition-duration: .3s;
+}
+
+.Btn:hover {
+    width: 125px;
+    border-radius: 7px; /* Ensure same border radius */
+    transition-duration: .3s;
+}
+
+.Btn:hover .sign {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 8px;
+}
+
+.Btn:hover .text {
+    opacity: 1;
+    width: 70%;
+    transition-duration: .3s;
+    padding-right: 10px;
+}
+
+.Btn:active {
+    transform: translate(2px, 2px);
+}
+
+/* New white header styles */
+.white-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    background-color: #ffffffd9;
+    backdrop-filter: blur(5px); /* Optional: adds a blur effect */
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.356);
+    margin-top: 0px;
+}
+
+.user-info-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.branch-center {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.user-info-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.white-header .profile-img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.white-header .user-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.white-header .status-box {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.white-header .status {
+    font-size: 14px;
+}
+
+.white-header .branch {
+    font-size: 14px;
+    color: #333;
+}
+
+.white-header .user-info {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Card container */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust columns to fit available space */
+    gap: 20px; /* General gap between columns and rows */
+    row-gap: 30px; /* Vertical gap between rows */
+    width: 90%;
+    margin-top: -20px; /* Adjust margin to avoid overlap */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Individual card styles */
+.card {
+    background: linear-gradient(to bottom, #d7e8fc, #ffffff); /* Gradient background */
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 150px; /* Adjust card size */
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin: 0 0 10px 0;
+}
+
+.card img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+/* Breadcrumb styles */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+    transform: translate(130px, 50px); /* Move breadcrumb down by 70px and right by 100px */
+    background: none; /* Remove background */
+    width: calc(100% - 300px); /* Reduce width by 700px */
+}
+
+/* Breadcrumb links */
+.breadcrumb a {
+    text-decoration: none;
+    color: #007bff;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Add underline animation on hover */
+.breadcrumb a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    transition: width 0.3s ease-in-out;
+}
+
+.breadcrumb a:hover {
+    color: #0056b3; /* Darker blue */
+}
+
+.breadcrumb a:hover::after {
+    width: 100%;
+}
+
+/* Separator styling */
+.breadcrumb .separator {
+    margin: 0 5px;
+    color: #666;
+    font-size: 18px;
+    transform: skew(0deg); /* Remove skew for separator */
+}
+
+/* Last item (non-clickable) */
+.breadcrumb span:last-child {
+    color: #000;
+    font-weight: bold;
+}
+
+
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .breadcrumb {
+        flex-wrap: nowrap; /* Ensure breadcrumb stays in a single line */
+        overflow-x: auto; /* Allow horizontal scrolling if needed */
+        right: 0; /* Reset right position for smaller screens */
+        width: 100%; /* Adjust width for smaller screens */
+        transform: translate(0, 50px); /* Adjust transform for smaller screens */
+    }
+
+    .breadcrumb__item:hover {
+        background-color: white; /* Ensure no color change on hover */
+        color: #333;
+    }
+
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+        
+        gap: 20px; /* Add gap between cards */
+        margin-top: 20px; /* Move card container down */
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .dashboard-container {
+        margin: 60px auto 0px auto; /* Adjusted margin for responsiveness */
+    }
+
+    .header {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: flex-start; /* Align items to the start */
+        
+       
+    }
+
+    .header .title {
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis if text overflows */
+    }
+
+    .header-buttons {
+        width: 100%;
+        justify-content: flex-start; /* Align buttons to the start */
+        margin-top: 10px; /* Add some space between title and buttons */
+    }
+
+    .card-container {
+        grid-template-columns: repeat(2, 1fr); /* Adjust columns for smaller screens */
+        row-gap: 40px; /* Increase row gap for better spacing */
+    }
+
+    .card {
+        width: 90%; /* Increase card width */
+    }
+
+    .user-info-right {
+        left: 0; /* Reset position for very small screens */
+    }
+
+    .clg-name{
+        font-size: 0.8rem;
+    }
+
+
+    
+
+   
+}
+
+@media (max-width: 350px) {
+
+    .clg-name{
+        font-size: 13px;
+    }
+
+    .breadcrumb {
+        display: none; /* Hide breadcrumb in mobile view */
+    }
+
+    .card-container {
+        grid-template-columns: repeat(2, 1fr); /* Two cards in one line */
+        row-gap: 20px; /* Adjust row gap */
+        column-gap: 20px; /* Adjust column gap */
+        margin-left: 0; /* Reset left margin */
+        gap: 20px; /* Add gap between cards */
+        margin-top: 20px; /* Move card container down */
+    }
+
+    .card {
+        width: 100%; /* Increase card width */
+    }
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr); /* Adjust columns for smaller screens */
+        row-gap: 40px; /* Increase row gap for better spacing */
+    }
+
+    .user-info-right {
+        left: 0; /* Reset position for very small screens */
+    }
+   
+}
+
+.status {
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    padding: 3px;
+}
+
+.white-header .status-box {
+    background-color: #28a745;
+    color: rgb(6, 6, 6);
+    padding: 2px 8px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+
+@media (max-width: 1200px) {
+    .user-info-right {
+        left: -400px; /* Adjust position for medium screens */
+    }
+}
+
+@media (max-width: 992px) {
+    .user-info-right {
+        left: -200px; /* Adjust position for smaller screens */
+    }
+}
+
+
+
+
+.head-lg{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+
+
+
+  .footer {
+    background-color: #ffffff;
+    color: #1f1919;
+   
+    text-align: center;
+    margin-top: 38px;
+  }
+
+  .footer-social {
+    margin-bottom: 20px;
+  }
+
+  .footer-social h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .social-icons a {
+    margin: 0 10px;
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+
+  .social-icons a:hover {
+    transform: scale(1.2);
+  }
+
+  .footer-bottom {
+    font-size: 14px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+  }
+
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .footer {
+      padding: 15px 10px;
+    }
+
+    .footer-social h3 {
+      font-size: 16px;
+    }
+
+    .social-icons a {
+      margin: 0 5px;
+    }
+
+    .footer-bottom {
+      font-size: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-social h3 {
+      font-size: 14px;
+    }
+
+    .social-icons a img {
+      height: 20px;
+    }
+
+    .footer-bottom {
+      font-size: 10px;
+    }
+  }
+
+
+  .card-container{
+    a{
+        text-decoration: none;
+    }
+  }

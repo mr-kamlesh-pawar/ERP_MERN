@@ -1,153 +1,63 @@
-import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Users,
-  Eye,
-  Cloud,
-  TrendingUp,
-  Facebook,
-  Linkedin,
-  Twitter,
-  Instagram,
-} from "lucide-react";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import React from 'react';
 
 const FacultyDashboard = () => {
+  const cards = [
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281918/Images/ijek8iohuthqwjx1gfjo.png', title: 'Account', link: 'account' },
+    { icon: 'https://cdn-icons-png.flaticon.com/512/8901/8901603.png', title: 'Dashboard Data', link: 'dashboard-data' },
+    { icon: 'https://cdn-icons-png.flaticon.com/512/201/201608.png', title: 'All Students', link: 'stud-info' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/rbmzkvrscdwvih5rrady.png', title: 'Attendance', link: 'attendance' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wmonr8lnbnncle2rnuer.png', title: 'Upload Notes', link:'upload-notes' },
+    { icon: 'https://cdn-icons-png.flaticon.com/512/3982/3982361.png', title: 'Notes List', link:'notes-list' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/kxypri3joxsvcy0946lc.png', title: 'Timetable', link:'timetable'},
+    { icon: 'https://static.vecteezy.com/system/resources/thumbnails/022/119/017/small_2x/notice-icon-png.png', title: 'Create Notice', link:'create-notice' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/uf3y3vb7bpssgyi0vlzd.png', title: 'Show Notices', link:'show-notices' },
+    { icon: 'https://cdn-icons-png.flaticon.com/512/2995/2995440.png', title: 'Create Test', link:'create-test' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/tocnfhkmlepd8analtat.png', title: 'Test Results', link:'test-result' },
+    { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/cobmzeablwihe5xbql9r.png', title: 'Upcoming Event', link:'event' },
+    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/n3xpda3v9aejsdvurxnj.png', title: 'Fees', link:'fees' },
 
+  //  { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/ngfkgriyzygohbrqrfgp.png', title: 'Academic Calendar', link:'academic' },
 
-// State to store counts
-const [counts, setCounts] = useState({
-  students: 0,
-  faculties: 0,
-  departments: 0,
-  subjects:0
-});
-
-// Fetch counts from API
-useEffect(() => {
-  const fetchCounts = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/faculty/dashboard/counts");
-      const data = await response.json();
-
-      if (data.success) {
-        setCounts({
-          students: data.counts.students,
-          faculties: data.counts.faculties,
-          departments: data.counts.departments,
-          subjects: data.counts.subjects,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching counts:", error);
-    }
-  };
-
-  fetchCounts();
-}, []);
-
-
-
-
-
-
-
-  const data = {
-    labels: ["2019", "2020", "2021", "2022", "2023", "2024", "2025"],
-    datasets: [
-      {
-        label: "Placement Statistics",
-        data: [65, 59, 80, 81, 56, 55, 58],
-        fill: false,
-        backgroundColor: "#4F46E5",
-        borderColor: "#4F46E5",
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Placement Trends",
-      },
-    },
-  };
-
-  const stats = [
-    { icon: <Users className="text-gray-400" />, label: "Total Students", value: `${counts.students}+`, color: "text-blue-700" },
-    { icon: <Eye className="text-gray-400" />, label: "Total Departments", value: `${counts.departments}+`, color: "text-purple-700" },
-    { icon: <Cloud className="text-gray-400" />, label: "Total Teachers", value: `${counts.faculties}+`, color: "text-green-600" },
-    { icon: <TrendingUp className="text-gray-400" />, label: "Total Subjects", value: `${counts.subjects}+`, color: "text-red-600" },
+    { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wd4ozsnkgxqbhi6dru9r.png', title: 'College Policy', link:'policy' },
+    { icon: 'https://cdn3d.iconscout.com/3d/premium/thumb/job-offer-3d-icon-download-in-png-blend-fbx-gltf-file-formats--letter-opportunity-employment-availability-pack-business-icons-10842857.png?f=webp', title: 'College Placements', link:'placements' },
+    // { icon: 'https://cdn-icons-png.flaticon.com/512/4664/4664514.png', title: 'Department Faculties', link:'faculties' },
   ];
 
-  const socialMedia = [
-    { icon: <Facebook className="text-blue-600" />, name: "Facebook", description: "Connect with friends, share photos, and discover what's happening around the world." },
-    { icon: <Linkedin className="text-blue-700" />, name: "LinkedIn", description: "Network with professionals, discover job opportunities, and build your career profile." },
-    { icon: <Twitter className="text-blue-500" />, name: "Twitter", description: "Stay updated with real-time news, trends, and the voices of your favorite people." },
-    { icon: <Instagram className="text-pink-500" />, name: "Instagram", description: "Share photos, explore trends, and connect with visual storytellers worldwide." },
-  ];
-
-
- 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold text-center mb-6">Dashboard</h1>
+    <div
+      className="bg-cover bg-center min-h-screen relative -m-[25px]"
+      style={{
+        backgroundImage: "url('https://res.cloudinary.com/dftldrxjh/image/upload/v1739281924/Images/iqzbzresd8zrw6f1dftn.jpg')",
+      }}
+    >
+      {/* Background blur overlay */}
+      <div
+        className="absolute inset-0 backdrop-blur"
+        style={{
+          backdropFilter: "blur(5px)",
+        }}
+      ></div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, index) => (
-          <Card key={index} className="flex flex-col items-center p-6 bg-white shadow-md rounded-2xl text-center hover:scale-105 transition-transform">
-            <div className="mb-4 text-3xl">{stat.icon}</div>
-            <h2 className={`${stat.color} text-3xl font-bold`}>{stat.value}</h2>
-            <p className="text-gray-500">{stat.label}</p>
-          </Card>
-        ))}
-      </div>
-
-      {/* Graph Section */}
-      <Card className="bg-white p-6 shadow-md rounded-2xl mb-8">
-        <h2 className="text-xl font-bold mb-4 text-center">Placement Graph</h2>
-        <div className="w-full overflow-x-auto">
-          <div className="min-w-[200px] md:w-3/4 lg:w-2/3 mx-auto">
-            <Line data={data} options={options} />
-          </div>
+      {/* Cards container */}
+      <div className="relative z-10 container mx-auto p-4 sm:p-6 lg:p-8 flex justify-center mt-14 ">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-7 gap-4 sm:gap-6 lg:gap-8 w-[90%]">
+          {cards.map((card, index) => (
+            <a
+              key={index}
+              href={card.link || '#'}
+              className="no-underline transform transition-transform duration-300 hover:scale-105 focus:scale-105"
+            >
+              <div className="card p-4 sm:p-6 bg-white bg-opacity-90 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center justify-center">
+                <img
+                  src={card.icon}
+                  alt={`${card.title} Icon`}
+                  className="w-16 h-16 sm:w-20 sm:h-20 mb-3 sm:mb-4 object-contain"
+                />
+                <h3 className="text-center text-lg sm:text-xl font-semibold text-gray-800">{card.title}</h3>
+              </div>
+            </a>
+          ))}
         </div>
-      </Card>
-
-      {/* Social Media Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {socialMedia.map((social, index) => (
-          <Card key={index} className="flex flex-col items-center p-6 shadow-lg rounded-2xl text-center hover:scale-105 transition-transform">
-            <div className="text-4xl mb-4">{social.icon}</div>
-            <h2 className="text-2xl font-bold mb-2">{social.name}</h2>
-            <p className="text-sm text-gray-600">{social.description}</p>
-          </Card>
-        ))}
       </div>
     </div>
   );

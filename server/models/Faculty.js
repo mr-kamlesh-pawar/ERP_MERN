@@ -39,6 +39,10 @@ const facultySchema= new mongoose.Schema({
             type: String,
             required: true,
           },
+          avatar: {
+            type: String,
+            
+          },
           contactNumber: {
             type: Number,
           },

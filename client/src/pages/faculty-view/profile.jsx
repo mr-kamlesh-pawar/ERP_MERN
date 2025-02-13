@@ -14,6 +14,7 @@ const FacultyProfile = () => {
     joiningYear: "",
     avatar: "",
     contactNumber: "",
+    avatar: "",
   });
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -98,7 +99,7 @@ const FacultyProfile = () => {
 
             <TabsContent value="account">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {["userName", "email"].map((field) => (
+                {["userName", "email","avatar"].map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label htmlFor={field} className="text-sm font-medium text-gray-700 capitalize">
                       {field.replace(/([A-Z])/g, " $1").toUpperCase()}
