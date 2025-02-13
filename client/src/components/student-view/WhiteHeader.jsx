@@ -37,6 +37,7 @@ const WhiteHeader = () => {
           <span className="status-box">
             <span className="status active text-sm text-green-600">● Active</span>
           </span>
+          <span className=" text-gray-600">⭕Student</span>
         </div>
       </div>
 

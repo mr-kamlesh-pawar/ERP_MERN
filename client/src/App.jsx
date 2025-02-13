@@ -53,6 +53,7 @@ import Placements from "./pages/student-view/placement";
 import Faculties from "./pages/student-view/showFaculties";
 import FacultyIDCard from "./components/faculty-view/VirtualIDCard";
 import OldDashboard from "./pages/faculty-view/oldDashboard";
+import AnimatedCursor from "./components/common/AnimatedCursor";
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       {/*  Common components */}
+      <AnimatedCursor />
 
       <Routes>
         <Route
@@ -141,6 +143,7 @@ function App() {
           <Route path="dashboard-data" element={<OldDashboard/>} />
           <Route path="placements" element={<Placements />} />
           <Route path="policy" element={<CollegePolicyPage />} />
+          <Route path="faq" element={<FAQComponent />} />
          
         </Route>
 

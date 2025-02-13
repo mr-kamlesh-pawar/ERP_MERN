@@ -40,7 +40,7 @@ const FAQComponent = () => {
             <HelpCircle className="w-6 h-6 text-blue-600" />
             Frequently Asked Questions
           </CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardDescription className="text-gray-600 ">
             Find answers to common questions about the Rasiklal M. Dhariwal Institute of Technology College ERP.
           </CardDescription>
         </CardHeader>
@@ -48,12 +48,12 @@ const FAQComponent = () => {
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="hover:bg-gray-50 px-4 py-3 rounded-lg flex items-center justify-between">
+                <AccordionTrigger className="hover:bg-gray-200 bg-gray-50 px-4 py-3 rounded-lg flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {faq.icon}
                     <span className="text-left font-medium">{faq.question}</span>
                   </div>
-                  <ChevronDown className="w-5 h-5 text-gray-500 transition-transform duration-200" />
+          
                 </AccordionTrigger>
                 <AccordionContent className="px-4 py-3 text-gray-600">
                   {faq.answer}

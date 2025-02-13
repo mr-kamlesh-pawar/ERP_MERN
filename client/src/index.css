@@ -124,3 +124,66 @@ button:focus-visible {
   width: max-content;
   animation: marquee 29s linear infinite;
 }
+
+
+/* Scrollbar Track */
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+  height: 12px; /* Height of the horizontal scrollbar */
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #6d28d9, #4c1d95); /* Gradient for a premium look */
+  border-radius: 10px; /* Rounded corners */
+  border: 3px solid #ffffff; /* White border around the handle */
+}
+
+/* Scrollbar Handle on Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #7c3aed, #5b21b6); /* Darker gradient on hover */
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray background for the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Scrollbar Corner */
+::-webkit-scrollbar-corner {
+  background: #f1f1f1; /* Match the track background */
+}
+
+/* Firefox Scrollbar */
+/* Note: Firefox supports limited scrollbar styling */
+* {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: #9988b5 #f1f1f1; /* Thumb and track color */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes trail {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}

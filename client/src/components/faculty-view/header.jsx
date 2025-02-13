@@ -51,7 +51,7 @@ function handleLogout() {
         </Link>
 
         {/* Loader */}
-        <Link to="notices">
+        <Link to="show-notices">
        
         <div className="loader relative p-2 rounded-lg  transition-all duration-200">
           <svg viewBox="0 0 24 24" fill="none" height="24" width="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="w-6 h-6 text-gray-800">
