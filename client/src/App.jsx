@@ -49,6 +49,8 @@ import EventsComponent from "./pages/student-view/events";
 import StudentTestResults from "./pages/student-view/StudentTestResults";
 import FeeStructureStudent from "./pages/student-view/fees";
 import CollegePolicyPage from "./pages/student-view/CollegePolicyPage";
+import Placements from "./pages/student-view/placement";
+import Faculties from "./pages/student-view/showFaculties";
 
 
 function App() {
@@ -155,6 +157,8 @@ function App() {
           <Route path="test-result" element={<StudentTestResults />} />
           <Route path="fees" element={<FeeStructureStudent />} />
           <Route path="policy" element={<CollegePolicyPage />} />
+          <Route path="placements" element={<Placements />} />
+          <Route path="faculties" element={<Faculties />} />
          
         </Route>
     

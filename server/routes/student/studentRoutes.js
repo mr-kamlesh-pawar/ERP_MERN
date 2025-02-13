@@ -1,6 +1,6 @@
 const express = require("express");
 const { authMiddleware } = require("../../controllers/auth/auth-controller");
-const { getStudentProfile, updateStudentProfile, getRecentEvent, getRecentNotice, getTimetableForStudent, getAcademicsCalender, getNoticesForStudents, getEvents, getStudentTests, getFeeStructure } = require("../../controllers/student/studentController");
+const { getStudentProfile, updateStudentProfile, getRecentEvent, getRecentNotice, getTimetableForStudent, getAcademicsCalender, getNoticesForStudents, getEvents, getStudentTests, getFeeStructure, getFacultiesByStudentDepartment } = require("../../controllers/student/studentController");
 const router = express.Router();
 
 
@@ -29,6 +29,8 @@ router.get("/events", getEvents);
 router.get("/fee-structure", authMiddleware, getFeeStructure);
 
 
+// Get all faculties based on the student's department
+router.get("/faculties", authMiddleware, getFacultiesByStudentDepartment);
 
 module.exports = router;
 

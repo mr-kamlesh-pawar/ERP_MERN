@@ -12,6 +12,8 @@ const StudentDashboard = () => {
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/uf3y3vb7bpssgyi0vlzd.png', title: 'Notification', link:'notices' },
     { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/cobmzeablwihe5xbql9r.png', title: 'Upcoming Event', link:'events' },
     { icon: 'http://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wd4ozsnkgxqbhi6dru9r.png', title: 'College Policy', link:'policy' },
+    { icon: 'https://cdn3d.iconscout.com/3d/premium/thumb/job-offer-3d-icon-download-in-png-blend-fbx-gltf-file-formats--letter-opportunity-employment-availability-pack-business-icons-10842857.png?f=webp', title: 'College Placements', link:'placements' },
+    { icon: 'https://cdn-icons-png.flaticon.com/512/4664/4664514.png', title: 'Department Faculties', link:'faculties' },
   ];
 
   return (

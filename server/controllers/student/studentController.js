@@ -5,6 +5,7 @@ const Timetable = require("../../models/Timetable");
 const TestResult = require("../../models/Marks");
 const Test = require("../../models/Test");
 const FeeStructure = require("../../models/FeeStructure");
+const Faculty = require("../../models/Faculty");
 
 // Get Student Profile
 const getStudentProfile = async (req, res) => {
@@ -232,7 +233,29 @@ const getFeeStructure = async (req, res) => {
 
 
 
+// Get all faculties based on the student's department
+const getFacultiesByStudentDepartment = async (req, res) => {
+  try {
+    const { id: studentId } = req.user; // Assuming student ID is available in req.user
 
+    // Fetch student details
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    // Fetch faculties based on the student's department
+    const faculties = await Faculty.find({ department: student.department });
+
+    if (faculties.length === 0) {
+      return res.status(404).json({ success: false, message: "No faculties found for this department" });
+    }
+
+    res.status(200).json({ success: true, data: faculties });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 
 module.exports={
@@ -245,6 +268,7 @@ module.exports={
     getNoticesForStudents,
     getEvents,
     getStudentTests,
-    getFeeStructure
+    getFeeStructure,
+    getFacultiesByStudentDepartment
 
 }

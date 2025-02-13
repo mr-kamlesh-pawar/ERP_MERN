@@ -5,8 +5,7 @@ import { loginUser } from '@/store/auth-slice';
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import logo from '../../assets/logo.png'
 
 const AuthLogin = () => {
  const initialState = {
@@ -45,15 +44,14 @@ const AuthLogin = () => {
           }
         
       });
-        
-
       }
 
   return (
     <div className=' mx-auto w-full max-w-md space-y-6'>
       <div className='text-center flex flex-col justify-center items-center'>
       <img
-      src='http://rmdiot.in/images/estdImg.jpg'
+      className='h-24'
+      src={logo}
       />
 
         <h1 className='text-3xl font-bold tracking-tight text-foreground'>SignIn You Account</h1>
