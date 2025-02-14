@@ -57,15 +57,16 @@ const Footer = () => {
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
               Darshan Wagh
             </span>
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-              Om Chaudhary
-            </span>
             <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
-              Om Raut
+              Aakash Raut
             </span>
             <span className="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-medium">
               Atif Shaikh
             </span>
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              Om Chaudhary
+            </span>
+           
           </div>
         </div>
 

@@ -6,7 +6,6 @@ const {
   getAllStudentsForAtt,
   markAttendance,
   getAttendance,
-  updateAttendance,
   getFacultyProfile,
   updateFacultyProfile,
   uploadNotes,
@@ -27,23 +26,37 @@ const {
   uploadTestResult,
   deptSub,
   getTests,
-  fetchStudentsForTest,
   getStudentsForTest,
   createClassroom,
   updateClassroom,
   deleteClassroom,
   getClassrooms,
   getSubs,
+  getSubjectsFromSem,
 } = require("../../controllers/faculty/facultyController");
 const router = express.Router();
 const upload = require("../../utils/multerConfig");
 
 router.get("/departments", getAllDepartments);
 router.get("/dept-subjects/:department", getAllDeptSubjects);
-router.post("/fetch-students-filter", getAllStudentsForAtt);
-router.post("/mark-attendance", markAttendance);
-router.post("/get-attendance", getAttendance);
-router.post("/update-attendance", updateAttendance);
+// router.post("/fetch-students-filter", getAllStudentsForAtt);
+// router.post("/mark-attendance", authMiddleware, markAttendance);
+// router.post("/get-attendance",authMiddleware, getAttendance);
+
+
+
+
+
+
+// Routes
+router.post("/mark-attendance", authMiddleware, markAttendance);
+router.post("/get-attendance", authMiddleware, getAttendance);
+router.post("/fetch-students",  getAllStudentsForAtt);
+router.get("/get-subsem/:semester", authMiddleware, getSubjectsFromSem);
+
+
+
+//router.post("/update-attendance", updateAttendance);
 router.get("/profile", authMiddleware, getFacultyProfile);
 router.put("/profile", authMiddleware, updateFacultyProfile);
 

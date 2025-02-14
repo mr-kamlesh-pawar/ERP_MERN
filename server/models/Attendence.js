@@ -1,9 +1,9 @@
+// Updated Attendance Schema
 const mongoose = require('mongoose');
 
-const attendenceSchema = new mongoose.Schema({
-  studentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Student",
+const attendanceSchema = new mongoose.Schema({
+  semester: {
+    type: String,
     required: true,
   },
   subject: {
@@ -11,19 +11,29 @@ const attendenceSchema = new mongoose.Schema({
     ref: "Subject",
     required: true,
   },
-  totalLecturesByFaculty: {
-    type: Number,
-    default: 1,
-  },
-  lectureAttended: {
-    type: Number,
-    default: 0,
+  faculty: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Faculty",
+    required: true
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
   },
+  // Store attendance as an array of present students
+  presentStudents: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Student"
+  }],
+  // Store total class strength for reference
+  totalStudents: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Student"
+  }]
 });
 
-const Attendence = mongoose.model('Attendence', attendenceSchema);
-module.exports = Attendence;
+// Create a compound unique index to prevent duplicate records
+attendanceSchema.index({ subject: 1, date: 1 }, { unique: true });
+
+const Attendance = mongoose.model('Attendance', attendanceSchema);
+module.exports = Attendance;

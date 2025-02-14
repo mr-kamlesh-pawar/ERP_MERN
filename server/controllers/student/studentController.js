@@ -7,6 +7,13 @@ const Test = require("../../models/Test");
 const FeeStructure = require("../../models/FeeStructure");
 const Faculty = require("../../models/Faculty");
 const Classroom = require("../../models/Classroom");
+const sendMail = require("../../utils/mailSender");
+const Subject = require("../../models/Subject");
+const Attendance = require("../../models/Attendence");
+
+
+
+
 
 // Get Student Profile
 const getStudentProfile = async (req, res) => {
@@ -31,6 +38,133 @@ const updateStudentProfile = async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
+    const email=student.email;
+    // Example: Send an HTML email
+    const htmlContent = `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Update Notification</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #007bff, #00bfff);
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 20px;
+      color: #333333;
+    }
+
+    .content h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #007bff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #666666;
+      font-size: 14px;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animated {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container animated">
+    <!-- Header -->
+    <div class="header">
+      <h1>Rasiklal M. Dhariwal Institute of Technology</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h2>Profile Updated Successfully!</h2>
+      <p>Dear Student,</p>
+      <p>Your profile has been successfully updated in the <strong>ERP System</strong> of Rasiklal M. Dhariwal Institute of Technology, Chinchwad.</p>
+      <p>If you did not make these changes or have any concerns, please contact the administration immediately.</p>
+      <a href="https://your-erp-system-link.com" class="cta-button">Login to ERP System</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2023 Rasiklal M. Dhariwal Institute of Technology, Chinchwad. All rights reserved.</p>
+      <p>This is an automated email. Please do not reply.</p>
+    </div>
+  </div>
+</body>
+</html>
+    `;
+    
+    sendMail(email, 'Student Profile Updated', '', htmlContent)
+    .then(() => console.log('HTML email sent successfully!'))
+    .catch((error) => console.error('Failed to send HTML email:', error));
+    
     res.json(student);
   } catch (error) {
     console.error("Error updating student profile:", error);
@@ -310,6 +444,62 @@ const getClassroomBySubject = async (req, res) => {
 };
 
 
+
+// Get student's attendance
+const getStudentAttendance = async (req, res) => {
+  try {
+    const studentId = req.user.id; // Assuming student ID is available in req.user.id
+
+    // Find the student's semester and department
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const { semester, department } = student;
+
+    // Find all subjects for the student's semester and department
+    const subjects = await Subject.find({ semester, department });
+    const subjectIds = subjects.map(subject => subject._id);
+
+    // Find attendance records for the student
+    const attendanceRecords = await Attendance.find({
+      subject: { $in: subjectIds },
+      totalStudents: studentId,
+    }).populate('subject').populate('faculty');
+
+    // Calculate attendance for each subject
+    const attendanceData = subjects.map(subject => {
+      const subjectAttendance = attendanceRecords.filter(record =>
+        record.subject._id.equals(subject._id)
+      );
+
+      const totalLectures = subjectAttendance.length;
+      const presentLectures = subjectAttendance.filter(record =>
+        record.presentStudents.includes(studentId)
+      ).length;
+
+      const percentage = totalLectures > 0 ? ((presentLectures / totalLectures) * 100).toFixed(2) : 0;
+
+      // Get faculty name from the first attendance record (assuming it's consistent)
+      const facultyName = subjectAttendance.length > 0 ? subjectAttendance[0].faculty.userName : 'Unknown';
+
+      return {
+        subject: subject.subjectName,
+        facultyName,
+        totalLectures,
+        presentLectures,
+        percentage,
+      };
+    });
+
+    res.status(200).json({ attendanceData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports={
     getStudentProfile,
     updateStudentProfile,
@@ -323,6 +513,7 @@ module.exports={
     getFeeStructure,
     getFacultiesByStudentDepartment,
     getStudentSubjects,
-    getClassroomBySubject
+    getClassroomBySubject,
+    getStudentAttendance
 
 }

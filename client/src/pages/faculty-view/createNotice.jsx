@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectGroup, SelectLabel } from "@/components/ui/select";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, Loader2 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -18,6 +18,7 @@ const CreateNotice = () => {
     to: "all", // Default "to" value (all, students, faculties)
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch all notices from the backend
   useEffect(() => {
@@ -34,6 +35,7 @@ const CreateNotice = () => {
 
   // Handle Create/Update
   const handleSaveNotice = async () => {
+    setIsLoading(true);
     try {
       if (action === "create") {
         // Create a new notice
@@ -50,6 +52,8 @@ const CreateNotice = () => {
       closeModal();
     } catch (error) {
       console.error("Error saving notice:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,13 +97,13 @@ const CreateNotice = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">Manage Notices</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Manage Notices</h1>
 
         {/* Action Buttons */}
         <div className="flex justify-end mb-6">
           <Button
             onClick={() => openModal(null, "create")}
-            className="bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+            className="bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2 transition-transform transform hover:scale-105"
           >
             <Plus size={18} /> Add Notice
           </Button>
@@ -121,7 +125,7 @@ const CreateNotice = () => {
                 <tr key={notice._id} className="hover:bg-gray-50 transition duration-200">
                   <td className="px-6 py-4 text-sm text-gray-700">{notice._id}</td>
                   <td
-                    className="px-6 py-4 text-sm text-blue-600 cursor-pointer"
+                    className="px-6 py-4 text-sm text-blue-600 cursor-pointer hover:underline"
                     onClick={() => openModal(notice, "view")}
                   >
                     {notice.title}
@@ -131,13 +135,13 @@ const CreateNotice = () => {
                     <div className="flex gap-2">
                       <Button
                         onClick={() => openModal(notice, "update")}
-                        className="bg-yellow-500 text-white hover:bg-yellow-600"
+                        className="bg-yellow-500 text-white hover:bg-yellow-600 transition-transform transform hover:scale-105"
                       >
                         <Pencil size={16} /> Edit
                       </Button>
                       <Button
                         onClick={() => handleDeleteNotice(notice._id)}
-                        className="bg-red-500 text-white hover:bg-red-600"
+                        className="bg-red-500 text-white hover:bg-red-600 transition-transform transform hover:scale-105"
                       >
                         <Trash2 size={16} /> Delete
                       </Button>
@@ -152,14 +156,14 @@ const CreateNotice = () => {
         {/* Modal for Add/Update Notice */}
         {isModalOpen && action !== "view" && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
             onClick={closeModal}
           >
             <div
-              className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6"
+              className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 animate-fade-in"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold mb-4">
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
                 {action === "create" ? "Add Notice" : "Update Notice"}
               </h2>
 
@@ -228,8 +232,12 @@ const CreateNotice = () => {
                 <Button onClick={closeModal} className="bg-gray-500 text-white hover:bg-gray-600">
                   Cancel
                 </Button>
-                <Button onClick={handleSaveNotice} className="bg-blue-600 text-white hover:bg-blue-700">
-                  Save
+                <Button
+                  onClick={handleSaveNotice}
+                  className="bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="animate-spin" size={18} /> : "Save"}
                 </Button>
               </div>
             </div>
@@ -239,14 +247,14 @@ const CreateNotice = () => {
         {/* Modal for View Notice */}
         {isModalOpen && action === "view" && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
             onClick={closeModal}
           >
             <div
-              className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6"
+              className="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 animate-fade-in"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-xl font-bold mb-4">Notice Details</h2>
+              <h2 className="text-xl font-bold mb-4 text-gray-800">Notice Details</h2>
 
               <div className="space-y-4">
                 <div>

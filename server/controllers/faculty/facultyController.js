@@ -1,7 +1,7 @@
 const Department = require("../../models/Department");
 const Subject = require("../../models/Subject");
 const Student = require("../../models/Student");
-const Attendence = require("../../models/Attendence.js");
+const Attendance = require("../../models/Attendence.js");
 const Faculty = require("../../models/Faculty.js");
 
 const fs = require("fs");
@@ -204,50 +204,182 @@ const Classroom  = require("../../models/Classroom.js");
 //new
 
 // Mark Attendance
+// const markAttendance = async (req, res) => {
+//   try {
+//     const { selectedStudents, subject, department, year, class1, date } =
+//       req.body;
+
+//     // Find the subject ID based on the subject name
+//     const subjectDoc = await Subject.findOne({ subjectName: subject });
+//     if (!subjectDoc) {
+//       return res.status(404).json({ message: "Subject not found" });
+//     }
+//     const subjectId = subjectDoc._id;
+
+//     // Fetch students for given filters
+//     const students = await Student.find({ department, year, class1 });
+//     if (!students || students.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: "No students found for these filters" });
+//     }
+
+//     // Convert date to standard format
+//     const attendanceDate = new Date(date).toISOString();
+
+//     // Remove previous attendance records for this subject and date
+//     await Attendence.deleteMany({ subject: subjectId, date: attendanceDate });
+
+//     // Store attendance in a proper format
+//     const attendanceRecords = students.map((student) => ({
+//       studentId: student._id,
+//       subject: subjectId,
+//       date: attendanceDate,
+//       lectureAttended: selectedStudents.includes(student._id.toString())
+//         ? 1
+//         : 0,
+//       totalLecturesByFaculty: 1,
+//     }));
+
+//     // Insert all attendance records at once for better performance
+//     await Attendence.insertMany(attendanceRecords);
+
+//     // Return success response
+//     res.status(200).json({
+//       message: "Attendance marked successfully",
+//       attendanceRecords,
+//     });
+//   } catch (error) {
+//     console.error("Error marking attendance:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
+// // Fetch Attendance
+// const getAttendance = async (req, res) => {
+//   try {
+//     const { department, year, class1, subject, date } = req.body;
+
+//     console.log("Fetching attendance for:", {
+//       department,
+//       year,
+//       class1,
+//       subject,
+//       date,
+//     });
+
+//     // Find the subject ID based on the subject name
+//     const subjectDoc = await Subject.findOne({ subjectName: subject });
+//     if (!subjectDoc) {
+//       return res.status(404).json({ message: "Subject not found" });
+//     }
+//     const subjectId = subjectDoc._id;
+
+//     console.log("Subject ID:", subjectId);
+
+//     // Find students based on the provided filters
+//     const students = await Student.find({ department, year, class1 });
+//     if (!students || students.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: "No students found for these filters" });
+//     }
+
+//     console.log("Students found:", students.length);
+
+//     // Convert date to standard format
+//     const attendanceDate = new Date(date).toISOString();
+
+//     console.log("Attendance Date:", attendanceDate);
+
+//     // Fetch attendance records for the students
+//     const attendanceRecords = await Attendence.find({
+//       studentId: { $in: students.map((student) => student._id) },
+//       subject: subjectId,
+//       date: attendanceDate,
+//     }).populate("studentId", "name rollNo");
+
+//     console.log("Attendance Records:", attendanceRecords);
+
+//     // Return the attendance records in response
+//     res.json({ attendanceRecords });
+//   } catch (error) {
+//     console.error("Error fetching attendance:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+// // Update Attendance
+// const updateAttendance = async (req, res) => {
+//   try {
+//     const { selectedStudents, subject, department, year, class1, date } =
+//       req.body;
+
+//     // Find the subject ID based on the subject name
+//     const subjectDoc = await Subject.findOne({ subjectName: subject });
+//     if (!subjectDoc) {
+//       return res.status(404).json({ message: "Subject not found" });
+//     }
+//     const subjectId = subjectDoc._id;
+
+//     // Fetch students for given filters
+//     const students = await Student.find({ department, year, class1 });
+//     if (!students || students.length === 0) {
+//       return res
+//         .status(404)
+//         .json({ message: "No students found for these filters" });
+//     }
+
+//     // Convert date to standard format
+//     const attendanceDate = new Date(date).toISOString();
+
+//     // Update attendance records for the students
+//     for (const student of students) {
+//       const isPresent = selectedStudents.includes(student._id.toString());
+
+//       await Attendence.updateOne(
+//         { studentId: student._id, subject: subjectId, date: attendanceDate },
+//         { lectureAttended: isPresent ? 1 : 0 },
+//         { upsert: true } // Create a new record if it doesn't exist
+//       );
+//     }
+
+//     // Return success response
+//     res.status(200).json({
+//       message: "Attendance updated successfully",
+//     });
+//   } catch (error) {
+//     console.error("Error updating attendance:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
+
+// Backend Controller Functions
 const markAttendance = async (req, res) => {
   try {
-    const { selectedStudents, subject, department, year, class1, date } =
-      req.body;
+    const { semester, subject, date, presentStudents, totalStudents } = req.body;
+    const faculty = req.user.id;
 
-    // Find the subject ID based on the subject name
-    const subjectDoc = await Subject.findOne({ subjectName: subject });
-    if (!subjectDoc) {
-      return res.status(404).json({ message: "Subject not found" });
-    }
-    const subjectId = subjectDoc._id;
+    // Format date to "YYYY-MM-DD"
+    const formattedDate = new Date(date).toISOString().split("T")[0];
 
-    // Fetch students for given filters
-    const students = await Student.find({ department, year, class1 });
-    if (!students || students.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No students found for these filters" });
-    }
+    // Find or update attendance record
+    const attendance = await Attendance.findOneAndUpdate(
+      { subject, date: formattedDate, faculty },
+      {
+        semester,
+        presentStudents,
+        totalStudents,
+        faculty,
+        date: formattedDate,
+      },
+      { upsert: true, new: true }
+    );
 
-    // Convert date to standard format
-    const attendanceDate = new Date(date).toISOString();
-
-    // Remove previous attendance records for this subject and date
-    await Attendence.deleteMany({ subject: subjectId, date: attendanceDate });
-
-    // Store attendance in a proper format
-    const attendanceRecords = students.map((student) => ({
-      studentId: student._id,
-      subject: subjectId,
-      date: attendanceDate,
-      lectureAttended: selectedStudents.includes(student._id.toString())
-        ? 1
-        : 0,
-      totalLecturesByFaculty: 1,
-    }));
-
-    // Insert all attendance records at once for better performance
-    await Attendence.insertMany(attendanceRecords);
-
-    // Return success response
     res.status(200).json({
       message: "Attendance marked successfully",
-      attendanceRecords,
+      attendance
     });
   } catch (error) {
     console.error("Error marking attendance:", error);
@@ -255,104 +387,71 @@ const markAttendance = async (req, res) => {
   }
 };
 
-// Fetch Attendance
+const mongoose = require("mongoose");
+
 const getAttendance = async (req, res) => {
   try {
-    const { department, year, class1, subject, date } = req.body;
+    const { subject, date } = req.body;
+    const faculty = req.user.id;
 
-    console.log("Fetching attendance for:", {
-      department,
-      year,
-      class1,
-      subject,
-      date,
-    });
+    // Format date to "YYYY-MM-DD"
+    const queryDate = new Date(date).toISOString().split("T")[0];
 
-    // Find the subject ID based on the subject name
-    const subjectDoc = await Subject.findOne({ subjectName: subject });
-    if (!subjectDoc) {
-      return res.status(404).json({ message: "Subject not found" });
-    }
-    const subjectId = subjectDoc._id;
+    console.log("Query Parameters:", { subject, date: queryDate, faculty });
 
-    console.log("Subject ID:", subjectId);
+    // Convert subject and faculty to ObjectId properly
+    const subjectId = new mongoose.Types.ObjectId(subject);
+    const facultyId = new mongoose.Types.ObjectId(faculty);
 
-    // Find students based on the provided filters
-    const students = await Student.find({ department, year, class1 });
-    if (!students || students.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No students found for these filters" });
-    }
-
-    console.log("Students found:", students.length);
-
-    // Convert date to standard format
-    const attendanceDate = new Date(date).toISOString();
-
-    console.log("Attendance Date:", attendanceDate);
-
-    // Fetch attendance records for the students
-    const attendanceRecords = await Attendence.find({
-      studentId: { $in: students.map((student) => student._id) },
+    // Find attendance record
+    const attendance = await Attendance.findOne({
       subject: subjectId,
-      date: attendanceDate,
-    }).populate("studentId", "name rollNo");
+      date: queryDate,
+      faculty: facultyId
+    }).populate("presentStudents", "name rollNo");
 
-    console.log("Attendance Records:", attendanceRecords);
+    console.log("Attendance Found:", attendance);
 
-    // Return the attendance records in response
-    res.json({ attendanceRecords });
+    if (!attendance) {
+      return res.status(404).json({ message: "Attendance not found" });
+    }
+
+    res.json({ attendance });
   } catch (error) {
     console.error("Error fetching attendance:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// Update Attendance
-const updateAttendance = async (req, res) => {
-  try {
-    const { selectedStudents, subject, department, year, class1, date } =
-      req.body;
-
-    // Find the subject ID based on the subject name
-    const subjectDoc = await Subject.findOne({ subjectName: subject });
-    if (!subjectDoc) {
-      return res.status(404).json({ message: "Subject not found" });
-    }
-    const subjectId = subjectDoc._id;
-
-    // Fetch students for given filters
-    const students = await Student.find({ department, year, class1 });
-    if (!students || students.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No students found for these filters" });
-    }
-
-    // Convert date to standard format
-    const attendanceDate = new Date(date).toISOString();
-
-    // Update attendance records for the students
-    for (const student of students) {
-      const isPresent = selectedStudents.includes(student._id.toString());
-
-      await Attendence.updateOne(
-        { studentId: student._id, subject: subjectId, date: attendanceDate },
-        { lectureAttended: isPresent ? 1 : 0 },
-        { upsert: true } // Create a new record if it doesn't exist
-      );
-    }
-
-    // Return success response
-    res.status(200).json({
-      message: "Attendance updated successfully",
-    });
-  } catch (error) {
-    console.error("Error updating attendance:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+//Get all students
+
+
+
+
+
+
+const getAllStudentsForAtt = async (req, res) => {
+  const { semester,class1 } = req.body;
+
+  try {
+    if (!semester || !class1) {
+      return res.status(400).json({ message: "Semester is required" });
+    }
+
+    const students = await Student.find({ semester, class1});
+    res.status(200).json({ students });
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
 
 // Get all departments
 const getAllDepartments = async (req, res) => {
@@ -385,38 +484,7 @@ const getAllDeptSubjects = async (req, res) => {
   }
 };
 
-// Get all students
-const getAllStudentsForAtt = async (req, res) => {
-  const { department, year, subject, class1 } = req.body;
 
-  try {
-    // Validate required fields
-    if (!department || !year || !subject || !class1) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-    // Convert subject to ObjectId (assuming subject is sent as string)
-    // Fetch the subject object by name
-    const subjectObj = await Subject.findOne({ subjectName: subject });
-    if (!subjectObj) {
-      return res.status(400).json({ message: "Subject not found" });
-    }
-
-    // Fetch students based on criteria
-    const students = await Student.find({
-      department,
-      year,
-      class1,
-      subjects: { $in: [subjectObj._id] }, // Check if subject is in the subjects array
-    });
-
-    return res.status(200).json({ success: true, students });
-  } catch (error) {
-    console.error("Error fetching students:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to fetch students", error: error.message });
-  }
-};
 
 // Fetch faculty profile
 const getFacultyProfile = async (req, res) => {
@@ -898,12 +966,6 @@ const getStudentsForTest = async (req, res) => {
 };
 
 
-
-
-
-
-
-
 //classroom
 const createClassroom = async (req, res) => {
   try {
@@ -1019,18 +1081,28 @@ const getSubs= async (req, res) => {
   }
 }
 
-
+const getSubjectsFromSem = async (req, res) => {
+  try {
+    const { semester } = req.params;
+    const fac= await Faculty.findById(req.user.id);
+    const subjects = await Subject.find({ semester, department:fac.department});
+    res.status(200).json({ subjects });
+  } catch (error) {
+    console.error("Error fetching subjects:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 
 
 
 module.exports = {
+  getSubjectsFromSem,
   getAllDepartments,
   markAttendance,
   getAllDeptSubjects,
   getAllStudentsForAtt,
   getAttendance,
-  updateAttendance,
   getFacultyProfile,
   updateFacultyProfile,
   uploadNotes,

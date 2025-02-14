@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const Subject = require("../../models/Subject");
 const Event = require("../../models/Event");
 const Student = require("../../models/Student");
+const sendMail = require("../../utils/mailSender");
 
 const getAdminProfile = async (req, res) => {
   try {
@@ -115,9 +116,123 @@ const createNotice = async (req, res) => {
     // Save the notice to the database
     await newNotice.save();
 
+    // Fetch emails based on the 'to' field
+    let recipientEmails = [];
+
+    if (to === "students" || to === "all") {
+      const students = await Student.find({}, "email"); // Fetch student emails
+      recipientEmails.push(...students.map((student) => student.email));
+    }
+
+    if (to === "faculties" || to === "all") {
+      const faculties = await Faculty.find({}, "email"); // Fetch faculty emails
+      recipientEmails.push(...faculties.map((faculty) => faculty.email));
+    }
+
+    // Remove duplicate emails (if any)
+    recipientEmails = [...new Set(recipientEmails)];
+
+    // If there are recipients, send an email notification
+    if (recipientEmails.length > 0) {
+      const emailSubject = "New Notice: " + title;
+      const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Notice Alert</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+          }
+          .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            background: linear-gradient(135deg, #007bff, #00bfff);
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+          }
+          .content {
+            padding: 20px;
+            color: #333333;
+          }
+          .content h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+          }
+          .content p {
+            font-size: 16px;
+            line-height: 1.6;
+          }
+          .cta-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+          }
+          .cta-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+          }
+          .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #666666;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="email-container">
+          <div class="header">
+            <h1>New Notice Alert</h1>
+          </div>
+          <div class="content">
+            <h2>${title}</h2>
+            <p><strong>Date:</strong> ${date}</p>
+            <p>${description}</p>
+            <p>From: <strong>${from}</strong></p>
+            <a href="https://your-erp-system-link.com/notices" class="cta-button">View Notice</a>
+          </div>
+          <div class="footer">
+            <p>© 2025 Rasiklal M. Dhariwal Institute of Technology, Chinchwad. All rights reserved.</p>
+            <p>This is an automated email. Please do not reply.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+      `;
+
+      // Send email to all recipients
+      await sendMail(recipientEmails, emailSubject, '', htmlContent);
+      console.log("Notice email sent successfully!");
+    }
+
     res.status(201).json({
       success: true,
-      message: "Notice created successfully",
+      message: "Notice created successfully & emails sent.",
       notice: newNotice,
     });
   } catch (error) {
@@ -128,6 +243,7 @@ const createNotice = async (req, res) => {
     });
   }
 };
+
 
 // Get all notices
 const getAllNotices = async (req, res) => {
@@ -267,6 +383,155 @@ const createAdmin = async (req, res) => {
 
     // Save the admin to the database
     await newAdmin.save();
+
+    const Mail = newAdmin.email;
+    const userPassword = password; // Assuming password is stored securely and hashed
+    
+    // Example: Send an HTML email
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to ERP System</title>
+      <style>
+        /* General Styles */
+        body {
+          font-family: 'Poppins', sans-serif;
+          background-color: #f4f4f4;
+          margin: 0;
+          padding: 0;
+        }
+    
+        .email-container {
+          max-width: 600px;
+          margin: 20px auto;
+          background-color: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+    
+        .header {
+          background: linear-gradient(135deg, #007bff, #00bfff);
+          color: #ffffff;
+          text-align: center;
+          padding: 25px;
+          font-size: 24px;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+    
+        .content {
+          padding: 25px;
+          color: #333;
+        }
+    
+        .content h2 {
+          font-size: 22px;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+    
+        .content p {
+          font-size: 16px;
+          line-height: 1.8;
+          color: #555;
+        }
+    
+        .credentials {
+          background-color: #f8f9fa;
+          padding: 15px;
+          border-radius: 8px;
+          margin-top: 15px;
+          font-size: 16px;
+          font-weight: bold;
+        }
+    
+        .cta-button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 14px 28px;
+          background-color: #007bff;
+          color: #fffff;
+          text-decoration: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+    
+        .cta-button:hover {
+          background-color: #0056b3;
+          transform: translateY(-3px);
+        }
+    
+        .footer {
+          text-align: center;
+          padding: 20px;
+          background-color: #f4f4f4;
+          color: #666;
+          font-size: 14px;
+        }
+    
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+    
+        .animated {
+          animation: fadeIn 1s ease-out;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container animated">
+        <!-- Header -->
+        <div class="header">
+          Welcome to Rasiklal M. Dhariwal Institute of Technology
+        </div>
+    
+        <!-- Content -->
+        <div class="content">
+          <h2>Welcome to Our ERP System!</h2>
+          <p>Dear ${newAdmin.userName},</p>
+          <p>We are pleased to inform you that your account has been successfully created in the <strong>ERP System</strong> of Rasiklal M. Dhariwal Institute of Technology, Chinchwad.</p>
+          
+          <div class="credentials">
+            <p><strong>Admin Login Credentials:</strong></p>
+            <p>🔹 <strong>Email:</strong> ${Mail}</p>
+            <p>🔹 <strong>Password:</strong> ${userPassword}</p>
+          </div>
+    
+          <p>You can log in using the button below:</p>
+          <a href="https://your-erp-system-link.com" class="cta-button">Login to ERP System</a>
+    
+          <p>If you have any questions or issues, please contact the administration.</p>
+        </div>
+    
+        <!-- Footer -->
+        <div class="footer">
+          <p>© 2023 Rasiklal M. Dhariwal Institute of Technology, Chinchwad. All rights reserved.</p>
+          <p>This is an automated email. Please do not reply.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+    `;
+    
+    // Send Email
+    sendMail(Mail, 'Welcome to ERP System - Login Credentials', '', htmlContent)
+      .then(() => console.log('HTML email sent successfully!'))
+      .catch((error) => console.error('Failed to send HTML email:', error));
+    
+    
 
     res.status(201).json({
       success: true,
@@ -559,6 +824,156 @@ const createFaculty = async (req, res) => {
 
     // Save the faculty to the database
     await newFaculty.save();
+
+
+    const Mail = newFaculty.email;
+const userPassword = password; // Assuming password is stored securely and hashed
+
+// Example: Send an HTML email
+const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ERP System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #007bff, #00bfff);
+      color: #ffffff;
+      text-align: center;
+      padding: 25px;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      padding: 25px;
+      color: #333;
+    }
+
+    .content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    .credentials {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 14px 28px;
+      background-color: #007bff;
+      color: #fffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+      transform: translateY(-3px);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animated {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container animated">
+    <!-- Header -->
+    <div class="header">
+      Welcome to Rasiklal M. Dhariwal Institute of Technology
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h2>Welcome to Our ERP System!</h2>
+      <p>Dear ${newFaculty.userName},</p>
+      <p>We are pleased to inform you that your account has been successfully created in the <strong>ERP System</strong> of Rasiklal M. Dhariwal Institute of Technology, Chinchwad.</p>
+      
+      <div class="credentials">
+        <p><strong>Login Credentials:</strong></p>
+        <p>🔹 <strong>Email:</strong> ${Mail}</p>
+        <p>🔹 <strong>Password:</strong> ${userPassword}</p>
+      </div>
+
+      <p>You can log in using the button below:</p>
+      <a href="https://your-erp-system-link.com" class="cta-button">Login to ERP System</a>
+
+      <p>If you have any questions or issues, please contact the administration.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2023 Rasiklal M. Dhariwal Institute of Technology, Chinchwad. All rights reserved.</p>
+      <p>This is an automated email. Please do not reply.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+// Send Email
+sendMail(Mail, 'Welcome to ERP System - Login Credentials', '', htmlContent)
+  .then(() => console.log('HTML email sent successfully!'))
+  .catch((error) => console.error('Failed to send HTML email:', error));
+
+
 
     return res
       .status(201)
@@ -855,9 +1270,167 @@ const addStudent = async (req, res) => {
       await newStudent.save(); // Save the updated student with subjects
     }
 
+
+
+    const StudMail = newStudent.email;
+const userPassword = password; // Assuming password is stored securely and hashed
+
+// Example: Send an HTML email
+const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ERP System</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #007bff, #00bfff);
+      color: #ffffff;
+      text-align: center;
+      padding: 25px;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .content {
+      padding: 25px;
+      color: #333;
+    }
+
+    .content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #555;
+    }
+
+    .credentials {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .cta-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 14px 28px;
+      background-color: #007bff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+      transform: translateY(-3px);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animated {
+      animation: fadeIn 1s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container animated">
+    <!-- Header -->
+    <div class="header">
+      Welcome to Rasiklal M. Dhariwal Institute of Technology
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h2>Welcome to Our ERP System!</h2>
+      <p>Dear ${newStudent.name},</p>
+      <p>We are pleased to inform you that your account has been successfully created in the <strong>ERP System</strong> of Rasiklal M. Dhariwal Institute of Technology, Chinchwad.</p>
+      
+      <div class="credentials">
+        <p><strong>Login Credentials:</strong></p>
+        <p>🔹 <strong>Email:</strong> ${StudMail}</p>
+        <p>🔹 <strong>Password:</strong> ${userPassword}</p>
+      </div>
+
+      <p>You can log in using the button below:</p>
+      <a href="https://your-erp-system-link.com" class="cta-button">Login to ERP System</a>
+
+      <p>If you have any questions or issues, please contact the administration.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2023 Rasiklal M. Dhariwal Institute of Technology, Chinchwad. All rights reserved.</p>
+      <p>This is an automated email. Please do not reply.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+// Send Email
+sendMail(StudMail, 'Welcome to ERP System - Login Credentials', '', htmlContent)
+  .then(() => console.log('HTML email sent successfully!'))
+  .catch((error) => console.error('Failed to send HTML email:', error));
+
+
+
+
+
+
+
     return res
       .status(201)
       .json({ message: "Student added successfully", student: newStudent });
+
+     
+
   } catch (error) {
     console.error("Error adding student:", error);
     return res

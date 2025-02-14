@@ -14,6 +14,7 @@ const {
   getFacultiesByStudentDepartment,
   getClassroomBySubject,
   getStudentSubjects,
+  getStudentAttendance,
 } = require("../../controllers/student/studentController");
 const router = express.Router();
 
@@ -50,6 +51,12 @@ router.get('/semester-subjects', authMiddleware, getStudentSubjects);
 
 // Get classroom details for a specific subject
 router.get('/classroom/:subject', authMiddleware, getClassroomBySubject);
+
+
+// Get student attendance
+router.get('/attendance', authMiddleware, getStudentAttendance);
+
+
 
 module.exports = router;
 

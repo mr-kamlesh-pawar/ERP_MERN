@@ -56,6 +56,7 @@ import OldDashboard from "./pages/faculty-view/oldDashboard";
 import AnimatedCursor from "./components/common/AnimatedCursor";
 import FacultyClassroom from "./pages/faculty-view/classroom";
 import StudentClassroom from "./pages/student-view/studentClassroom";
+import StudentAttendance from "./pages/student-view/StudentAttendance";
 
 
 function App() {
@@ -173,6 +174,7 @@ function App() {
           <Route path="placements" element={<Placements />} />
           <Route path="faculties" element={<Faculties />} />
           <Route path="classroom" element={<StudentClassroom />} />
+          <Route path="attendance" element={<StudentAttendance />} />
          
         </Route>
     

@@ -4,7 +4,7 @@ const StudentDashboard = () => {
   const cards = [
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281918/Images/ijek8iohuthqwjx1gfjo.png', title: 'Account', link: 'account' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/rbmzkvrscdwvih5rrady.png', title: 'Attendance', link: 'attendance' },
-    { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wmonr8lnbnncle2rnuer.png', title: 'Assignment' },
+    // { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/wmonr8lnbnncle2rnuer.png', title: 'Assignment' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/kxypri3joxsvcy0946lc.png', title: 'Timetable', link:'timetable'},
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281920/Images/tocnfhkmlepd8analtat.png', title: 'Results', link:'test-result' },
     { icon: 'https://res.cloudinary.com/dftldrxjh/image/upload/v1739281919/Images/ngfkgriyzygohbrqrfgp.png', title: 'Academic Calendar', link:'academic' },

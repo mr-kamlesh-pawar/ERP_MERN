@@ -8,93 +8,84 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Loader2, CheckCircle, XCircle } from "lucide-react"; // Lucide icons
 
 const MarkAttendance = () => {
-  const [departments, setDepartments] = useState([]);
-  const [years, setYears] = useState([]);
-  const [classes, setClasses] = useState([]);
+  const [semesters] = useState(['1st Semester', '2nd Semester', '3rd Semester', '4th Semester', '5th Semester', '6th Semester']);
   const [subjects, setSubjects] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingStudents, setFetchingStudents] = useState(false);
   const { toast } = useToast();
+
   const [filters, setFilters] = useState({
-    department: "",
-    year: "",
-    class1: "",
+    semester: "",
     subject: "",
+    class1: "",
     date: new Date(),
   });
 
-  // Fetch departments on component mount
+  // Fetch subjects based on semester
   useEffect(() => {
-    axios.get("http://localhost:5000/api/faculty/departments")
-      .then((res) => setDepartments(res.data.departments))
-      .catch((err) => console.error("Error fetching departments:", err));
-  }, []);
-
-  // Fetch years based on selected department
-  useEffect(() => {
-    if (filters.department) {
-      setYears(["1st Year", "2nd Year", "3rd Year"]);
+    if (filters.semester) {
+      setLoading(true);
+      axios.get(`http://localhost:5000/api/faculty/get-subsem/${filters.semester}`, { withCredentials: true })
+        .then((res) => {
+          setSubjects(res.data.subjects);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching subjects:", err);
+          toast.error("Failed to fetch subjects");
+          setLoading(false);
+        });
     }
-  }, [filters.department]);
+  }, [filters.semester]);
 
-  // Fetch classes based on selected year and department
-  useEffect(() => {
-    if (filters.year && filters.department) {
-      setClasses(["1", "2", "3"]);
-    }
-  }, [filters.year, filters.department]);
-
-  // Fetch subjects based on selected class and department
-  useEffect(() => {
-    if (filters.class1 && filters.department) {
-      axios.get(`http://localhost:5000/api/faculty/dept-subjects/${filters.department}`)
-        .then((res) => setSubjects(res.data))
-        .catch((err) => console.error("Error fetching subjects:", err));
-    }
-  }, [filters.class1, filters.department]);
-
-  // Fetch students and their attendance status when the Fetch Students button is clicked
+  // Fetch students and their attendance status
   const handleFetchStudents = async () => {
-    if (!filters.subject || !filters.department || !filters.year || !filters.class1) {
-      toast.error("Please select all filters before fetching students.");
+    if (!filters.subject || !filters.semester) {
+      toast.error("Please select all filters");
       return;
     }
+
     setFetchingStudents(true);
     try {
-      // Fetch students based on filters
-      const studentsRes = await axios.post("http://localhost:5000/api/faculty/fetch-students-filter", filters);
-      setStudents(studentsRes.data.students || []);
-  
-      console.log("Fetched Students:", studentsRes.data.students);
-  
-      // Fetch attendance records for the selected date and subject
-      const attendanceRes = await axios.post("http://localhost:5000/api/faculty/get-attendance", {
-        ...filters,
-        date: filters.date.toISOString(),
+      // Fetch students for the selected semester
+      const studentsRes = await axios.post("http://localhost:5000/api/faculty/fetch-students", {
+        semester: filters.semester,
+        class1: filters.class1
       });
-  
-      console.log("Attendance Response:", attendanceRes.data);
-  
-      // If attendance records exist, mark students as present/absent
-      if (attendanceRes.data.attendanceRecords && attendanceRes.data.attendanceRecords.length > 0) {
-        const presentStudents = attendanceRes.data.attendanceRecords
-          .filter((record) => record.lectureAttended === 1)
-          .map((record) => record.studentId._id);
-  
-        console.log("Present Students:", presentStudents);
-  
-        setSelectedStudents(presentStudents);
-      } else {
-        // If no attendance records exist, reset selectedStudents
+
+      // Fetch attendance if it exists
+      const attendanceRes = await axios.post("http://localhost:5000/api/faculty/get-attendance", {
+        subject: filters.subject,
+        date: filters.date.toISOString().split("T")[0] // Convert to "YYYY-MM-DD"
+      }, {
+        withCredentials: true
+      });
+
+      setStudents(studentsRes.data.students);
+      toast({
+        title: 'Success',
+        description: 'Students fetched successfully.',
+        variant: 'default',
+      });
+
+      // Check if attendance data exists
+      if (attendanceRes.data.attendance) {
+        // Extract the IDs of the present students
+        const presentStudentIds = attendanceRes.data.attendance.presentStudents.map(student => student._id);
+        setSelectedStudents(presentStudentIds);
+      } else if (attendanceRes.data.message === "Attendance not found") {
+        // If attendance not found, reset selectedStudents to empty array
         setSelectedStudents([]);
       }
     } catch (error) {
-      console.error("Error fetching students:", error);
-      toast.error("Failed to fetch students.");
+      console.error("Error:", error);
+      // If there's an error (e.g., network error), reset selectedStudents to empty array
+      setSelectedStudents([]);
     }
     setFetchingStudents(false);
   };
@@ -103,157 +94,148 @@ const MarkAttendance = () => {
   const handleMarkAttendance = async () => {
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/faculty/mark-attendance", {
-        ...filters,
-        selectedStudents,
+      await axios.post("http://localhost:5000/api/faculty/mark-attendance", {
+        semester: filters.semester,
+        subject: filters.subject,
         date: filters.date.toISOString(),
-      });
+        presentStudents: selectedStudents,
+        totalStudents: students.map(student => student._id)
+      }, { withCredentials: true });
+
       toast({ title: "Attendance marked successfully!", variant: "success" });
-      setSelectedStudents([]);
     } catch (error) {
-      toast({ title: "Something went wrong!", variant: "error" });
-    } finally {
-      setLoading(false);
+      toast({ title: "Failed to mark attendance", variant: "error" });
     }
+    setLoading(false);
   };
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
       {/* Filters */}
-      <Card className="w-full md:w-1/3 p-4 bg-gray-100 rounded-lg">
-        <h2 className="text-lg font-semibold mb-4">Filters</h2>
-        <Select onValueChange={(value) => setFilters({ ...filters, department: value })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Department" />
-          </SelectTrigger>
-          <SelectContent>
-            {departments.map((d) => (
-              <SelectItem key={d._id} value={d.department}>
-                {d.department}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <Card className="w-full md:w-1/3 p-6 bg-gray-50 rounded-lg shadow-sm">
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Filters</h2>
 
-        <Select onValueChange={(value) => setFilters({ ...filters, year: value })} disabled={!filters.department}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Year" />
-          </SelectTrigger>
-          <SelectContent>
-            {years.map((y) => (
-              <SelectItem key={y} value={y}>
-                {y}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="space-y-4">
+          <Select
+            onValueChange={(value) => setFilters({ ...filters, semester: value })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Semester" />
+            </SelectTrigger>
+            <SelectContent>
+              {semesters.map((sem) => (
+                <SelectItem key={sem} value={sem.toString()}>
+                  {sem}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Select onValueChange={(value) => setFilters({ ...filters, class1: value })} disabled={!filters.year}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Class" />
-          </SelectTrigger>
-          <SelectContent>
-            {classes.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select
+            onValueChange={(value) => setFilters({ ...filters, subject: value })}
+            disabled={!filters.semester}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Subject" />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((subject) => (
+                <SelectItem key={subject._id} value={subject._id}>
+                  {subject.subjectName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Select onValueChange={(value) => setFilters({ ...filters, subject: value })} disabled={!filters.class1}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Subject" />
-          </SelectTrigger>
-          <SelectContent>
-            {subjects.map((s) => (
-              <SelectItem key={s._id} value={s.subjectName}>
-                {s.subjectName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select
+            onValueChange={(value) => setFilters({ ...filters, class1: value })}
+            disabled={!filters.semester}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem key="1" value="1">Class 1</SelectItem>
+              <SelectItem key="2" value="2">Class 2</SelectItem>
+              <SelectItem key="3" value="3">Class 3</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">Select Date</label>
-          <DatePicker
-            selected={filters.date}
-            onChange={(date) => setFilters({ ...filters, date })}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            dateFormat="yyyy/MM/dd"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
+            <DatePicker
+              selected={filters.date}
+              onChange={(date) => setFilters({ ...filters, date })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              dateFormat="yyyy/MM/dd"
+            />
+          </div>
+
+          <Button
+            onClick={handleFetchStudents}
+            className="w-full mt-4 hover:bg-blue-900"
+            disabled={fetchingStudents || !filters.subject}
+          >
+            {fetchingStudents ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Fetch Students"
+            )}
+          </Button>
         </div>
-
-        <Button onClick={handleFetchStudents} className="mt-4" disabled={fetchingStudents || !filters.subject}>
-          {fetchingStudents ? "Fetching Students..." : "Fetch Students"}
-        </Button>
       </Card>
 
       {/* Students Table */}
-      <Card className="w-full md:w-2/3 p-4 bg-white shadow rounded-lg">
-        <h2 className="text-lg font-semibold mb-4">Students</h2>
-        {fetchingStudents ? (
-          <div className="text-center">Loading students...</div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Roll No</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Select</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {students.map((student,index) => (
-                <TableRow key={student._id}>
-                  <TableCell>{index + 1}</TableCell> 
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>
+      <Card className="w-full md:w-2/3 p-6 bg-gray-50 rounded-lg shadow-sm">
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Students</h2>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Roll No</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {students.map((student, index) => (
+              <TableRow key={student._id} className="hover:bg-gray-100 transition-colors">
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{student.name}</TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
                     <Checkbox
+                      className="w-5 h-5 rounded-full border-2 border-blue-500 data-[state=checked]:bg-blue-500 bg-white"
                       checked={selectedStudents.includes(student._id)}
                       onCheckedChange={(checked) => {
-                        setSelectedStudents((prev) =>
+                        setSelectedStudents(prev =>
                           checked
                             ? [...prev, student._id]
-                            : prev.filter((id) => id !== student._id)
+                            : prev.filter(id => id !== student._id)
                         );
                       }}
-                      className={`relative inline-flex items-center justify-center w-6 h-6 border-2 rounded-full cursor-pointer transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        selectedStudents.includes(student._id)
-                          ? "bg-blue-500 border-blue-500"
-                          : "bg-white border-gray-400"
-                      }`}
-                    >
-                      {selectedStudents.includes(student._id) && (
-                        <svg
-                          className="w-4 h-4 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </Checkbox>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+                    />
+                    {selectedStudents.includes(student._id) ? (
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-500" />
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         <Button
-          className="w-full mt-6"
+          className="w-full mt-6  hover:bg-green-900"
           onClick={handleMarkAttendance}
-          disabled={loading || selectedStudents.length === 0}
+          disabled={loading || students.length === 0}
         >
-          {loading ? "Marking Attendance..." : "Mark Attendance"}
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            "Save Attendance"
+          )}
         </Button>
       </Card>
     </div>
