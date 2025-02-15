@@ -20,7 +20,9 @@ app.use(
         // List of allowed origins
         const allowedOrigins = [
           "http://localhost:5173", // Your local development server
-          "https://rmd-erp-sigma.vercel.app", // Your production frontend
+          "https://rmd-erp-sigma.vercel.app",
+          "https://erp-mern-mu.vercel.app"
+          //  // Your production frontend
         ];
   
         // Check if the origin is in the allowed list
