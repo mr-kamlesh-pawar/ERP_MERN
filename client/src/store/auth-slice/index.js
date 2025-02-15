@@ -13,7 +13,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (FormData) => {
     const response = await axios.post(
-      "http://localhost:5000/api/auth/register",
+      "https://rmd-erp-server.vercel.app/api/auth/register",
       FormData,
       { withCredentials: true }
     );
@@ -24,7 +24,7 @@ export const registerUser = createAsyncThunk(
 //for login
 export const loginUser = createAsyncThunk("auth/login", async (FormData) => {
   const response = await axios.post(
-    "http://localhost:5000/api/auth/login",
+    "https://rmd-erp-server.vercel.app/api/auth/login",
     FormData,
     { withCredentials: true }
   );
@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk("auth/login", async (FormData) => {
 //for check-auth
 export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
   const response = await axios.get(
-    "http://localhost:5000/api/auth/check-auth",
+    "https://rmd-erp-server.vercel.app/api/auth/check-auth",
     {
       withCredentials: true,
       headers: {
@@ -55,7 +55,7 @@ export const logoutUser = createAsyncThunk(
   
     async () => {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "https://rmd-erp-server.vercel.app/api/auth/logout",
         {},
         {
           withCredentials: true,
