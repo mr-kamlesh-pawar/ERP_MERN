@@ -10,18 +10,25 @@ const PORT = process.env.PORT;
 const adminRoutes = require('./routes/admin/adminRoutes')
 const facultyRoutes = require('./routes/faculty/facultyRoutes')
 const StudentRoutes = require('./routes/student/studentRoutes')
-app.use(cors({
-    origin: true,
-    'methods': ['GET', 'PUT', 'POST', 'DELETE'],
-    credentials: true,
-    'allowedHeaders': ['Content-Type', 
-        'Authorization',
-        'Cache-Control',
-        'Expires',
-        'Pragma'
-    ],
-    'credentials': true
-}));
+// CORS Configuration
+app.use(
+    cors({
+      origin: true, // Allow all origins (or specify your frontend domain, e.g., 'https://your-frontend-domain.com')
+      methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // Include OPTIONS for preflight requests
+      credentials: true, // Allow credentials (cookies, authorization headers)
+      allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Expires', 'Pragma'], // Allowed headers
+    })
+  );
+  
+  // Handle Preflight Requests
+  app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Private-Network', 'true'); // Add this header for private network access
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*'); // Dynamically set the allowed origin
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS'); // Allowed methods
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cache-Control, Expires, Pragma'); // Allowed headers
+    res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials
+    res.sendStatus(204); // No content for preflight
+  });
 
 app.use(express.json());
 app.use(cookieParser());
