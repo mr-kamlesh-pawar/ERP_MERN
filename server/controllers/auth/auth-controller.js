@@ -106,7 +106,8 @@ const loginUser = async (req, res) => {
     );
 
     // Set the token in a cookie and send the response
-    res.cookie("token", token, { httpOnly: true, secure: true,   }).json({
+    res.cookie("token", token, { httpOnly: true, secure: true,    sameSite: "none", // Allow cross-site requests
+      maxAge: 5 * 60 * 60 * 1000, }).json({
       success: true,
       message: "User logged in successfully.",
       user: {

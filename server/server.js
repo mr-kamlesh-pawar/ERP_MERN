@@ -13,10 +13,26 @@ const StudentRoutes = require('./routes/student/studentRoutes')
 // CORS Configuration
 app.use(
     cors({
-      origin: true, // Allow all origins (or specify your frontend domain, e.g., 'https://your-frontend-domain.com')
-      methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // Include OPTIONS for preflight requests
+      origin: (origin, callback) => {
+        // Allow requests with no origin (e.g., mobile apps, curl requests)
+        if (!origin) return callback(null, true);
+  
+        // List of allowed origins
+        const allowedOrigins = [
+          "http://localhost:5173", // Your local development server
+          "https://rmd-erp-sigma.vercel.app", // Your production frontend
+        ];
+  
+        // Check if the origin is in the allowed list
+        if (allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        } else {
+          return callback(new Error("Not allowed by CORS"));
+        }
+      },
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
       credentials: true, // Allow credentials (cookies, authorization headers)
-      allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Expires', 'Pragma'], // Allowed headers
+      allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Expires", "Pragma"], // Allowed headers
     })
   );
   
