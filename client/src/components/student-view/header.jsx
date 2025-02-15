@@ -21,7 +21,7 @@ function handleLogout() {
     
       <div className="title head-lg flex items-center space-x-4">
         <Avatar>
-          <AvatarImage src="http://rmdiot.in/images/estdImg.jpg" />
+          <AvatarImage src="https://res.cloudinary.com/dftldrxjh/image/upload/v1739607198/Images/p7p4ek9g2mmkk5g92qr8.jpg" />
         </Avatar>
         <p className="clg-name text-lg font-semibold text-gray-800">
           Rasiklal M. Dhariwal Institute of Technology
