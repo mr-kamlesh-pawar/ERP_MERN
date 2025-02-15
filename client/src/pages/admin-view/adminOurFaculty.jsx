@@ -23,7 +23,7 @@ const AdminOurFaculty = () => {
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/faculties");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/faculties");
         setFaculties(response.data);
       } catch (error) {
         console.error("Error fetching faculties:", error);
@@ -32,7 +32,7 @@ const AdminOurFaculty = () => {
 
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/departments");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/departments");
         
         // Check if the response has a `departments` property and it is an array
         if (response.data.success && Array.isArray(response.data.departments)) {
@@ -57,8 +57,8 @@ const AdminOurFaculty = () => {
     try {
       const apiUrl =
         action === "create"
-          ? "http://localhost:5000/api/admin/faculty"
-          : `http://localhost:5000/api/admin/faculty/${facultyData.id}`;
+          ? "https://rmd-erp-server.vercel.app/api/admin/faculty"
+          : `https://rmd-erp-server.vercel.app/api/admin/faculty/${facultyData.id}`;
   
       const method = action === "create" ? "post" : "put";
   
@@ -99,7 +99,7 @@ const AdminOurFaculty = () => {
   // Handle Delete Faculty
   const handleDeleteFaculty = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/faculty/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/faculty/${id}`);
       setFaculties(faculties.filter((faculty) => faculty._id !== id));
     } catch (error) {
       console.error("Error deleting faculty:", error);

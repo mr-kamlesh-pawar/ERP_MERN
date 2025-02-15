@@ -14,7 +14,7 @@ const AcademicCalendar = () => {
   useEffect(() => {
     const fetchAcademicCalendar = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/academic", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/academic", {
           withCredentials: true, // Include cookies for authentication
         });
 

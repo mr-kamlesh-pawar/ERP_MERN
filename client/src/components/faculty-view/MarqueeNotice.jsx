@@ -6,13 +6,13 @@ const MarqueeNotice = () => {
 
   useEffect(() => {
     // Fetch the most recent notice
-    fetch('http://localhost:5000/api/student/notices/recent')
+    fetch('https://rmd-erp-server.vercel.app/api/student/notices/recent')
       .then(response => response.json())
       .then(data => setNotice(data))
       .catch(error => console.error('Error fetching notice:', error));
 
     // Fetch the most recent event
-    fetch('http://localhost:5000/api/student/events/recent')
+    fetch('https://rmd-erp-server.vercel.app/api/student/events/recent')
       .then(response => response.json())
       .then(data => setEvent(data))
       .catch(error => console.error('Error fetching event:', error));

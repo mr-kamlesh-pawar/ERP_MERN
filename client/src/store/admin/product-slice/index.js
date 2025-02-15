@@ -12,7 +12,7 @@ const initialState={
 //add products
 export const addNewProduct= createAsyncThunk( "/products/addnewproduct",
     async (FormData)=>{
-        const result = await axios.post('http://localhost:5000/api/admin/products/add', FormData, {
+        const result = await axios.post('https://rmd-erp-server.vercel.app/api/admin/products/add', FormData, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -26,7 +26,7 @@ export const addNewProduct= createAsyncThunk( "/products/addnewproduct",
 export const fetchAllProducts= createAsyncThunk( "/products/fetchAllProducts",
     async () => {
         try {
-          const result = await axios.get('http://localhost:5000/api/admin/products/get');
+          const result = await axios.get('https://rmd-erp-server.vercel.app/api/admin/products/get');
           
           return result?.data;
         } catch (err) {
@@ -41,7 +41,7 @@ export const fetchAllProducts= createAsyncThunk( "/products/fetchAllProducts",
 //Edit a  products
 export const editProduct= createAsyncThunk( "/products/editProduct",
     async ({id,FormData})=>{
-        const result = await axios.put(`http://localhost:5000/api/admin/products/edit/${id}`, FormData, {
+        const result = await axios.put(`https://rmd-erp-server.vercel.app/api/admin/products/edit/${id}`, FormData, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -54,7 +54,7 @@ export const editProduct= createAsyncThunk( "/products/editProduct",
 //delete a  product
 export const deleteProduct= createAsyncThunk( "/products/deleteProduct",
     async (id)=>{
-        const result = await axios.delete(`http://localhost:5000/api/admin/products/delete/${id}`);
+        const result = await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/products/delete/${id}`);
         return result?.data;
     }
 );

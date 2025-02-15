@@ -12,7 +12,7 @@ const FacultyIDCard = () => {
   useEffect(() => {
     const fetchFacultyProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/profile", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/profile", {
           withCredentials: true, // Include cookies in the request
         });
         setFaculty(response.data);

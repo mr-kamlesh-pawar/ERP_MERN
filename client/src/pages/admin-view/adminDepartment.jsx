@@ -19,7 +19,7 @@ const AdminDepartment = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/departments");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/departments");
         setDepartments(response.data.departments);
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -33,12 +33,12 @@ const AdminDepartment = () => {
     try {
       if (action === "create") {
         // Create a new department
-        const response = await axios.post("http://localhost:5000/api/admin/departments", departmentData);
+        const response = await axios.post("https://rmd-erp-server.vercel.app/api/admin/departments", departmentData);
         setDepartments([...departments, response.data.department]);
       } else if (action === "update") {
         // Update an existing department
         const response = await axios.put(
-          `http://localhost:5000/api/admin/departments/${departmentData.id}`,
+          `https://rmd-erp-server.vercel.app/api/admin/departments/${departmentData.id}`,
           departmentData
         );
         setDepartments(
@@ -56,7 +56,7 @@ const AdminDepartment = () => {
   // Handle Delete Department
   const handleDeleteDepartment = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/departments/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/departments/${id}`);
       setDepartments(departments.filter((dept) => dept._id !== id));
     } catch (error) {
       console.error("Error deleting department:", error);

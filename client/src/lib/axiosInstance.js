@@ -3,7 +3,7 @@ import Cookies from "js-cookie"; // Import js-cookie for easier cookie handling
 
 // Create an axios instance with default headers
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api/faculty",
+  baseURL: "https://rmd-erp-server.vercel.app/api/faculty",
 });
 
 // Add a request interceptor to include the token in headers

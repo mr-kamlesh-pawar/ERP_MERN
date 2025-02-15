@@ -14,7 +14,7 @@ const EventsComponent = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/events");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/events");
 
         if (response.data.success) {
           setEvents(response.data.events);

@@ -30,7 +30,7 @@ const MarkAttendance = () => {
   useEffect(() => {
     if (filters.semester) {
       setLoading(true);
-      axios.get(`http://localhost:5000/api/faculty/get-subsem/${filters.semester}`, { withCredentials: true })
+      axios.get(`https://rmd-erp-server.vercel.app/api/faculty/get-subsem/${filters.semester}`, { withCredentials: true })
         .then((res) => {
           setSubjects(res.data.subjects);
           setLoading(false);
@@ -53,13 +53,13 @@ const MarkAttendance = () => {
     setFetchingStudents(true);
     try {
       // Fetch students for the selected semester
-      const studentsRes = await axios.post("http://localhost:5000/api/faculty/fetch-students", {
+      const studentsRes = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/fetch-students", {
         semester: filters.semester,
         class1: filters.class1
       });
 
       // Fetch attendance if it exists
-      const attendanceRes = await axios.post("http://localhost:5000/api/faculty/get-attendance", {
+      const attendanceRes = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/get-attendance", {
         subject: filters.subject,
         date: filters.date.toISOString().split("T")[0] // Convert to "YYYY-MM-DD"
       }, {
@@ -94,7 +94,7 @@ const MarkAttendance = () => {
   const handleMarkAttendance = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/faculty/mark-attendance", {
+      await axios.post("https://rmd-erp-server.vercel.app/api/faculty/mark-attendance", {
         semester: filters.semester,
         subject: filters.subject,
         date: filters.date.toISOString(),

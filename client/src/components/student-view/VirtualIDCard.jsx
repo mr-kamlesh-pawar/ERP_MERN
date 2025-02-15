@@ -12,7 +12,7 @@ const VirtualIDCard = () => {
   useEffect(() => {
     const fetchStudentProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/profile", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/profile", {
             withCredentials: true, // Include cookies in the request
           });
         setStudent(response.data);

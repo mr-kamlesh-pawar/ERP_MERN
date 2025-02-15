@@ -11,8 +11,9 @@ const adminRoutes = require('./routes/admin/adminRoutes')
 const facultyRoutes = require('./routes/faculty/facultyRoutes')
 const StudentRoutes = require('./routes/student/studentRoutes')
 app.use(cors({
-    'origin': 'http://localhost:5173',
+    'origin': 'https://rmd-erp-sigma.vercel.app',
     'methods': ['GET', 'PUT', 'POST', 'DELETE'],
+    credentials: true,
     'allowedHeaders': ['Content-Type', 
         'Authorization',
         'Cache-Control',
@@ -40,5 +41,5 @@ dbConnect();
 
 //default route
 app.get("/", (req,res)=>{
-    res.send("<h1>This is Server home page</h1> ");
+    res.send("<h1>This is Server home page of Rasiklal M. Dhariwal Institute of Technology, Chinchwad ERP System</h1> ");
 });

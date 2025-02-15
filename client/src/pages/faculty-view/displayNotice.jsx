@@ -11,7 +11,7 @@ const DisplayNotice = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/fac-notices");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/fac-notices");
         setNotices(response.data.notices);
       } catch (err) {
         setError("Failed to fetch notices. Please try again.");

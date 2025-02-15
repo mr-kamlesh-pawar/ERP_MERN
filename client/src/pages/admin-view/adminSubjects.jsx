@@ -25,7 +25,7 @@ const AdminSubjects = () => {
     const fetchDepartments = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/departments"
+          "https://rmd-erp-server.vercel.app/api/admin/departments"
         );
         if (response.data.success && Array.isArray(response.data.departments)) {
           setDepartments(response.data.departments);
@@ -48,7 +48,7 @@ const AdminSubjects = () => {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/subjects"
+          "https://rmd-erp-server.vercel.app/api/admin/subjects"
         );
         setSubjects(response.data);
       } catch (error) {
@@ -69,7 +69,7 @@ const AdminSubjects = () => {
     setLoading(true); // Start loading
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/subjects",
+        "https://rmd-erp-server.vercel.app/api/admin/subjects",
         {
           subjectName,
           subjectCode,
@@ -99,7 +99,7 @@ const AdminSubjects = () => {
   // Delete a subject
   const handleDeleteSubject = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/subjects/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/subjects/${id}`);
       setSubjects(subjects.filter((subject) => subject._id !== id));
     } catch (error) {
       console.error("Error deleting subject:", error);

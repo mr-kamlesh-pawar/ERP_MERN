@@ -11,7 +11,7 @@ const Faculties = () => {
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/faculties", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/faculties", {
           withCredentials: true,
         });
         setFaculties(response.data.data);

@@ -15,7 +15,7 @@ const AllStudents = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/faculty/get-students",
+        "https://rmd-erp-server.vercel.app/api/faculty/get-students",
         { class1: selectedClass },
         {
           headers: {

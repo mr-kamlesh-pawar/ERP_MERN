@@ -21,7 +21,7 @@ const UploadTestMarks = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/get-tests", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/get-tests", {
           withCredentials: true,
         });
         setTests(response.data);
@@ -55,7 +55,7 @@ const UploadTestMarks = () => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5000/api/faculty/students-for-test/${testId}`, {
+      const response = await axios.get(`https://rmd-erp-server.vercel.app/api/faculty/students-for-test/${testId}`, {
         withCredentials: true,
       });
 
@@ -102,7 +102,7 @@ const UploadTestMarks = () => {
         totalMarks,
       }));
 
-      await axios.post("http://localhost:5000/api/faculty/upload-test-result", marksData, {
+      await axios.post("https://rmd-erp-server.vercel.app/api/faculty/upload-test-result", marksData, {
         withCredentials: true,
       });
 

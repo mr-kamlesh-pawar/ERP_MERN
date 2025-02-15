@@ -15,7 +15,7 @@ const StudentClassroom = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/student/semester-subjects', {
+        const response = await axios.get('https://rmd-erp-server.vercel.app/api/student/semester-subjects', {
           withCredentials: true,
         });
         setSubjects(response.data);
@@ -35,7 +35,7 @@ const StudentClassroom = () => {
   // Fetch classroom details for a specific subject
   const fetchClassroomDetails = async (subject) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/student/classroom/${subject}`, {
+      const response = await axios.get(`https://rmd-erp-server.vercel.app/api/student/classroom/${subject}`, {
         withCredentials: true,
       });
       setSelectedClassroom(response.data);

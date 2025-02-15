@@ -20,7 +20,7 @@ const ShowAdmins = () => {
   useEffect(() => {
     const fetchAdmins = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/admins");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/admins");
         setAdmins(response.data.admins);
       } catch (error) {
         console.error("Error fetching admins:", error);
@@ -34,12 +34,12 @@ const ShowAdmins = () => {
     try {
       if (action === "create") {
         // Create a new admin
-        const response = await axios.post("http://localhost:5000/api/admin/admins", adminData);
+        const response = await axios.post("https://rmd-erp-server.vercel.app/api/admin/admins", adminData);
         setAdmins([...admins, response.data.admin]);
       } else if (action === "update") {
         // Update an existing admin
         const response = await axios.put(
-          `http://localhost:5000/api/admin/admins/${adminData.id}`,
+          `https://rmd-erp-server.vercel.app/api/admin/admins/${adminData.id}`,
           adminData
         );
         setAdmins(admins.map((admin) => (admin._id === adminData.id ? response.data.admin : admin)));
@@ -59,7 +59,7 @@ const ShowAdmins = () => {
   // Handle Delete
   const handleDeleteAdmin = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/admins/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/admins/${id}`);
       setAdmins(admins.filter((admin) => admin._id !== id));
     } catch (error) {
       console.error("Error deleting admin:", error);

@@ -40,7 +40,7 @@ const FacultyClassroom = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/faculty/get-subs', { withCredentials: true });
+        const response = await axios.get('https://rmd-erp-server.vercel.app/api/faculty/get-subs', { withCredentials: true });
         setSubjects(response.data);
       } catch (error) {
         console.error('Error fetching subjects:', error);
@@ -59,7 +59,7 @@ const FacultyClassroom = () => {
   useEffect(() => {
     const fetchClassrooms = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/faculty/get-classroom', { withCredentials: true });
+        const response = await axios.get('https://rmd-erp-server.vercel.app/api/faculty/get-classroom', { withCredentials: true });
         setClassrooms(response.data);
       } catch (error) {
         console.error('Error fetching classrooms:', error);
@@ -98,7 +98,7 @@ const FacultyClassroom = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/faculty/create-classroom', formData, {
+      const response = await axios.post('https://rmd-erp-server.vercel.app/api/faculty/create-classroom', formData, {
         withCredentials: true,
       });
       setClassrooms([...classrooms, response.data]);
@@ -144,7 +144,7 @@ const FacultyClassroom = () => {
   const handleUpdate = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/faculty/update-classroom/${id}`,
+        `https://rmd-erp-server.vercel.app/api/faculty/update-classroom/${id}`,
         editFormData,
         { withCredentials: true }
       );
@@ -168,7 +168,7 @@ const FacultyClassroom = () => {
   // Handle classroom deletion
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/faculty/delete-classroom/${id}`, { withCredentials: true });
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/faculty/delete-classroom/${id}`, { withCredentials: true });
       setClassrooms(classrooms.filter((cls) => cls._id !== id));
       toast({
         title: 'Success',

@@ -23,7 +23,7 @@ const FacultyProfile = () => {
   useEffect(() => {
     const fetchFacultyProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/profile", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/profile", {
           withCredentials: true, // Send cookies with the request
         });
         setFormData(response.data); // Populate formData with fetched data
@@ -49,7 +49,7 @@ const FacultyProfile = () => {
     setIsUpdating(true);
     try {
       await axios.put(
-        "http://localhost:5000/api/faculty/profile",
+        "https://rmd-erp-server.vercel.app/api/faculty/profile",
         formData,
         {
           withCredentials: true, // Send cookies with the request

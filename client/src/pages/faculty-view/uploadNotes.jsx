@@ -21,7 +21,7 @@ const UploadNotes = () => {
     // Fetch departments from the backend API
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/departments");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/departments");
         setDepartments(response.data.departments);
       } catch (error) {
         console.error("Error fetching departments:", error);
@@ -37,7 +37,7 @@ const UploadNotes = () => {
     const fetchSubjects = async () => {
       if (department) {
         try {
-          const response = await axios.get(`http://localhost:5000/api/faculty/dept-subjects/${department}`);
+          const response = await axios.get(`https://rmd-erp-server.vercel.app/api/faculty/dept-subjects/${department}`);
           setSubjects(response.data);
         } catch (error) {
           console.error("Error fetching subjects:", error);
@@ -68,7 +68,7 @@ const UploadNotes = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/faculty/upload", formData, {
+      const response = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

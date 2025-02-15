@@ -24,7 +24,7 @@ const FeeStructure = () => {
 
   const fetchFeeStructures = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/faculty/get-fees", {
+      const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/get-fees", {
         withCredentials: true,
       });
       setFeeStructures(response.data);
@@ -58,7 +58,7 @@ const FeeStructure = () => {
 
     try {
       setIsUploading(true); // Start upload progress
-      const response = await axios.post("http://localhost:5000/api/faculty/upload-fees", formData, {
+      const response = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/upload-fees", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });

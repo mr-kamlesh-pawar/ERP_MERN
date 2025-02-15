@@ -14,7 +14,7 @@ const TimetableComponent = () => {
   useEffect(() => {
     const fetchTimetable = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/timetable", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/timetable", {
           withCredentials: true, // Include cookies for authentication
         });
 

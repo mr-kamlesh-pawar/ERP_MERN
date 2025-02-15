@@ -41,8 +41,8 @@ const AdminStudents = () => {
     const fetchData = async () => {
       try {
         const [departmentsResponse, studentsResponse] = await Promise.all([
-          axios.get("http://localhost:5000/api/admin/departments"),
-          axios.get("http://localhost:5000/api/admin/students"),
+          axios.get("https://rmd-erp-server.vercel.app/api/admin/departments"),
+          axios.get("https://rmd-erp-server.vercel.app/api/admin/students"),
         ]);
         setDepartments(departmentsResponse.data.departments);
         setStudents(studentsResponse.data);
@@ -61,7 +61,7 @@ const AdminStudents = () => {
   // Search students by department and year
   const handleSearch = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/admin/students/search", {
+      const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/students/search", {
         params: {
           department: selectedDepartment,
           year: selectedYear,
@@ -77,7 +77,7 @@ const AdminStudents = () => {
   // Add a new student
   const handleAddStudent = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/admin/students", newStudent);
+      const response = await axios.post("https://rmd-erp-server.vercel.app/api/admin/students", newStudent);
       setStudents([...students, response.data.student]);
       setFilteredStudents([...filteredStudents, response.data.student]);
       alert("Student added successfully!");
@@ -108,7 +108,7 @@ const AdminStudents = () => {
   // Delete a student
   const handleDeleteStudent = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/students/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/students/${id}`);
       setStudents(students.filter((student) => student._id !== id));
       setFilteredStudents(filteredStudents.filter((student) => student._id !== id));
       alert("Student deleted successfully!");

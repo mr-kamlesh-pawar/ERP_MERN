@@ -15,13 +15,13 @@ const NotesList = () => {
       setLoading(true);
       try {
         // Fetch subjects
-        const subjectsResponse = await axios.get("http://localhost:5000/api/faculty/get-all-Subjects", {
+        const subjectsResponse = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/get-all-Subjects", {
           withCredentials: true,
         });
         setSubjects(subjectsResponse.data.subjects);
 
         // Fetch notes
-        const notesResponse = await axios.get("http://localhost:5000/api/faculty/notes", {
+        const notesResponse = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/notes", {
           withCredentials: true,
         });
         setNotes(notesResponse.data);

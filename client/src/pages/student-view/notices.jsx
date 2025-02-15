@@ -14,7 +14,7 @@ const NoticeComponent = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/notices", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/notices", {
           withCredentials: true, // Include cookies for authentication
         });
 

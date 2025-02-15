@@ -23,7 +23,7 @@ const AdminNotice = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/notices");
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/notices");
         setNotices(response.data.notices);
       } catch (error) {
         console.error("Error fetching notices:", error);
@@ -37,12 +37,12 @@ const AdminNotice = () => {
     try {
       if (action === "create") {
         // Create a new notice
-        const response = await axios.post("http://localhost:5000/api/admin/notices", noticeData);
+        const response = await axios.post("https://rmd-erp-server.vercel.app/api/admin/notices", noticeData);
         setNotices([...notices, response.data.notice]);
       } else if (action === "update") {
         // Update an existing notice
         const response = await axios.put(
-          `http://localhost:5000/api/admin/notices/${noticeData._id}`,
+          `https://rmd-erp-server.vercel.app/api/admin/notices/${noticeData._id}`,
           noticeData
         );
         setNotices(notices.map((notice) => (notice._id === noticeData._id ? response.data.notice : notice)));
@@ -56,7 +56,7 @@ const AdminNotice = () => {
   // Handle Delete
   const handleDeleteNotice = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/notices/${id}`);
+      await axios.delete(`https://rmd-erp-server.vercel.app/api/admin/notices/${id}`);
       setNotices(notices.filter((notice) => notice._id !== id));
     } catch (error) {
       console.error("Error deleting notice:", error);

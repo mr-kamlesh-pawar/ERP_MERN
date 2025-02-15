@@ -15,7 +15,7 @@ const TimeTable = () => {
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/get-timetable", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/get-timetable", {
           withCredentials: true,
         }
       );
@@ -53,7 +53,7 @@ const TimeTable = () => {
       formData.append("classNumber", classNumber);
 
       const response = await axios.post(
-        "http://localhost:5000/api/faculty/upload-timetable",
+        "https://rmd-erp-server.vercel.app/api/faculty/upload-timetable",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

@@ -48,7 +48,7 @@ const [counts, setCounts] = useState({
 useEffect(() => {
   const fetchCounts = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/faculty/dashboard/counts");
+      const response = await fetch("https://rmd-erp-server.vercel.app/api/faculty/dashboard/counts");
       const data = await response.json();
 
       if (data.success) {

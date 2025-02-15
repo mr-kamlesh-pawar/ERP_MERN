@@ -21,7 +21,7 @@ const CreateTest = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/faculty/get-dept-sub", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/faculty/get-dept-sub", {
           withCredentials: true,
         });
         setSubjects(response.data);
@@ -39,7 +39,7 @@ const CreateTest = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/faculty/create-test",
+        "https://rmd-erp-server.vercel.app/api/faculty/create-test",
         { testTitle, totalMarks, subject, year, class1 },
         { withCredentials: true }
       );

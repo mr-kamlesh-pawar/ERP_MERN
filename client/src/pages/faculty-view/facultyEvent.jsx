@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api/admin/events";
+const API_URL = "https://rmd-erp-server.vercel.app/api/admin/events";
 
 const FacultyEvent = () => {
   const [events, setEvents] = useState([]);

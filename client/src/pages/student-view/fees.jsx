@@ -11,7 +11,7 @@ const FeeStructureStudent = () => {
   useEffect(() => {
     const fetchFeeStructure = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/fee-structure", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/fee-structure", {
           withCredentials: true,
         });
         setFeeStructure(response.data.data);

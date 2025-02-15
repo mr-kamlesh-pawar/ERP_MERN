@@ -31,7 +31,7 @@ const StudentAccount = () => {
     const fetchStudentProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/student/profile",
+          "https://rmd-erp-server.vercel.app/api/student/profile",
           {
             withCredentials: true,
           }
@@ -58,7 +58,7 @@ const StudentAccount = () => {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      await axios.put("http://localhost:5000/api/student/profile", formData, {
+      await axios.put("https://rmd-erp-server.vercel.app/api/student/profile", formData, {
         withCredentials: true,
       });
       alert("Profile updated successfully!");

@@ -12,7 +12,7 @@ const StudentTestResults = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/student/student-tests", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/student/student-tests", {
           withCredentials: true,
         });
         setTests(response.data.data);

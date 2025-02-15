@@ -22,7 +22,7 @@ const AdminProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin/profile", {
+        const response = await axios.get("https://rmd-erp-server.vercel.app/api/admin/profile", {
           withCredentials: true, // Send cookies with the request
         });
         setFormData(response.data); // Populate formData with fetched data
@@ -48,7 +48,7 @@ const AdminProfile = () => {
     setIsUpdating(true);
     try {
       await axios.put(
-        "http://localhost:5000/api/admin/profile",
+        "https://rmd-erp-server.vercel.app/api/admin/profile",
         formData,
         {
           withCredentials: true, // Send cookies with the request
