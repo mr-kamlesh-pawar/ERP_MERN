@@ -11,7 +11,7 @@ const adminRoutes = require('./routes/admin/adminRoutes')
 const facultyRoutes = require('./routes/faculty/facultyRoutes')
 const StudentRoutes = require('./routes/student/studentRoutes')
 app.use(cors({
-    'origin': 'https://rmd-erp-sigma.vercel.app',
+    origin: true,
     'methods': ['GET', 'PUT', 'POST', 'DELETE'],
     credentials: true,
     'allowedHeaders': ['Content-Type', 

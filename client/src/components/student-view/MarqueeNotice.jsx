@@ -6,6 +6,7 @@ const MarqueeNotice = () => {
 
   useEffect(() => {
     // Fetch the most recent notice
+    //https://rmd-erp-server.vercel.app/api/student/notices/recent
     fetch('https://rmd-erp-server.vercel.app/api/student/notices/recent')
       .then(response => response.json())
       .then(data => setNotice(data))
