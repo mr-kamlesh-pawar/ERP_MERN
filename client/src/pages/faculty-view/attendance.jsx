@@ -49,7 +49,7 @@ const MarkAttendance = () => {
       toast.error("Please select all filters");
       return;
     }
-
+  
     setFetchingStudents(true);
     try {
       // Fetch students for the selected semester
@@ -57,35 +57,41 @@ const MarkAttendance = () => {
         semester: filters.semester,
         class1: filters.class1
       });
-
+  
       // Fetch attendance if it exists
-      const attendanceRes = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/get-attendance", {
-        subject: filters.subject,
-        date: filters.date.toISOString().split("T")[0] // Convert to "YYYY-MM-DD"
-      }, {
-        withCredentials: true
-      });
-
+      let attendanceRes;
+      try {
+        attendanceRes = await axios.post("https://rmd-erp-server.vercel.app/api/faculty/get-attendance", {
+          subject: filters.subject,
+          date: filters.date.toISOString().split("T")[0] // Convert to "YYYY-MM-DD"
+        }, {
+          withCredentials: true
+        });
+      } catch (error) {
+        // If the attendance API fails, we still want to display the students
+        console.error("Error fetching attendance:", error);
+        attendanceRes = { data: { message: "Attendance not found" } };
+      }
+  
       setStudents(studentsRes.data.students);
       toast({
         title: 'Success',
         description: 'Students fetched successfully.',
         variant: 'default',
       });
-
+  
       // Check if attendance data exists
       if (attendanceRes.data.attendance) {
         // Extract the IDs of the present students
         const presentStudentIds = attendanceRes.data.attendance.presentStudents.map(student => student._id);
         setSelectedStudents(presentStudentIds);
-      } else if (attendanceRes.data.message === "Attendance not found") {
-        // If attendance not found, reset selectedStudents to empty array
+      } else if (attendanceRes.data.message === "Attendance not found" || attendanceRes.status === 404) {
+        // If attendance not found or API returns 404, reset selectedStudents to empty array but still display students
         setSelectedStudents([]);
       }
     } catch (error) {
-      console.error("Error:", error);
-      // If there's an error (e.g., network error), reset selectedStudents to empty array
-      setSelectedStudents([]);
+      console.error("Error fetching students:", error);
+      toast.error("Failed to fetch students");
     }
     setFetchingStudents(false);
   };
