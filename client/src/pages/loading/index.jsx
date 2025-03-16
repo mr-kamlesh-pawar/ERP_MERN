@@ -11,7 +11,7 @@ const LoadingScreen = () => {
 
       {/* Loading Text */}
       <h2 className="mt-5 text-xl font-semibold text-gray-800">
-      Rasiklal M. Dhariwal Institute of Technology, Pune
+      Rasiklal M. Dhariwal Institute of Technology, chinchwad
       </h2>
       <p className="text-gray-600 text-sm mt-2">Loading, please wait...</p>
     </div>

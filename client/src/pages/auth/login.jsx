@@ -54,7 +54,7 @@ const AuthLogin = () => {
       src={logo}
       />
 
-        <h1 className='text-3xl font-bold tracking-tight text-foreground'>SignIn You Account</h1>
+        <h1 className='text-3xl font-bold tracking-tight text-foreground'>Sign In Your Account</h1>
         <p className='mt-2'>Rasiklal M. Dhariwal Institute of Technology, Chinchwad</p>
         <Link to='/'  className='font-medium  text-primary hover:underline ml-2'>🚀College ERP 🔑  </Link>
 
