@@ -51,7 +51,7 @@ const Footer = () => {
         </div>
 
         {/* Developed By Section */}
-        {/* <div className="developed-by text-center mb-8">
+        <div className="developed-by text-center mb-8">
           <h4 className="text-lg font-semibold mb-2">Developed With ❤️ By</h4>
           <div className="flex justify-center space-x-4">
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -68,7 +68,7 @@ const Footer = () => {
             </span>
            
           </div>
-        </div> */}
+        </div> 
 
         {/* Footer Bottom Section */}
         <div className="footer-bottom text-center border-t border-gray-200 pt-6">
